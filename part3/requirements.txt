@@ -6,3 +6,4 @@ flask-jwt-extended
 email-validator
 sqlalchemy
 flask-sqlalchemy
+flask_migrate
