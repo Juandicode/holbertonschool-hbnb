@@ -28,16 +28,15 @@ class UserList(Resource):
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        password = user_data.pop('password')
-        new_user = facade.create_user({**user_data, 'password': password})
+        # Hash the password before storing
+        user_data['password'] = hash_password(password)  # Hash the password using the utility function
+
+        # Create the user with the hashed password
+        new_user = facade.create_user(**user_data)
+        
+        # Do not return the password in the response
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name,
                 'email': new_user.email}, 201
-
-    def get(self):
-        """Get all users"""
-        users = facade.get_all()
-        return [{'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email} for user in users], 200
-
 @api.route('/<user_id>')
 class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')

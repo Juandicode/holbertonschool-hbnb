@@ -12,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 class User(BaseModel):
     """Class User, inherits from BaseModel"""
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     id = db.Column(db.String(36), primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
