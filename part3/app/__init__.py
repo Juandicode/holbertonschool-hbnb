@@ -1,17 +1,14 @@
 from flask import Flask
 from flask_restx import Api
-from config import config
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 
 bcrypt = Bcrypt()
 jwt = JWTManager()
 db = SQLAlchemy()  # inicializo la instancia de SQLAlchemy
-migrate = Migrate()
 
-def create_app(config_class=config['development']):
+def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
     api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API')
@@ -19,7 +16,6 @@ def create_app(config_class=config['development']):
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)  # inicializo sql alquemy con la app
-    migrate.init_app(app, db)
 
     # importamos los namespaces dentro para evitar circular imports
     from app.api.v1.amenities import api as amenities_ns

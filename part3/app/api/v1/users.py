@@ -19,8 +19,13 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new user"""
+        current_user = get_jwt_identity()  # Get the authenticated user
+        if not current_user['is_admin']:  # Check if the user is an admin
+            return {'error': 'Admin privileges required'}, 403
+
         user_data = api.payload
 
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
@@ -28,15 +33,25 @@ class UserList(Resource):
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        # Hash the password before storing
-        user_data['password'] = hash_password(password)  # Hash the password using the utility function
-
-        # Create the user with the hashed password
-        new_user = facade.create_user(**user_data)
-        
+        try:
+            # Create the user with the hashed password
+            new_user = facade.create_user(user_data)
+        except ValueError:
+            return {'error': 'Invalid input data'}, 400
         # Do not return the password in the response
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name,
                 'email': new_user.email}, 201
+    
+
+    @api.response(200, 'User list retrieved successfully')
+    @api.response(404, 'No users found')    
+    def get(self):
+        """Get all users"""
+        users = facade.user_repo.get_all()
+        if not users:
+            return {'error': 'No users found'}, 404
+        return [{'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email} for user in users], 200
+
 @api.route('/<user_id>')
 class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
@@ -44,15 +59,19 @@ class UserResource(Resource):
     def get(self, user_id):
         """Get user details by ID"""
         user = facade.get_user(user_id)
+
         if not user:
             return {'error': 'User not found'}, 404
+        
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+
 
     @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(200, 'User is successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Admin privileges required')
     def put(self, user_id):
             """Update a User (Admins or user themselves only)"""
             current_user = get_jwt_identity()  #Obtener usuario autenticado
@@ -65,24 +84,9 @@ class UserResource(Resource):
                 return {'error': "User not found"}, 404
 
             data = api.payload #obtiene los datos del usuario
-            updated_user = facade.update_user(user_id, data) #actualiza el usuario
+            try:
+                updated_user = facade.update_user(user_id, data) #actualiza el usuario
+            except ValueError:
+                return {'error': 'Invalid input data'}, 400
 
-            return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
-    
-@api.route('/users/')
-class AdminUserCreate(Resource):
-    @jwt_required()  #permite a un usuario admin crear otros usuarios
-    def post(self):
-        """Admin creates a new user"""
-        current_user = get_jwt_identity()
-        if not current_user['is_admin']: #verifica si el usuario es admin
-            return {'error': 'Admin privileges required'}, 403
-
-        user_data = request.json #obtiene los datos del usuario
-        email = user_data.get('email')
-
-        if facade.get_user_by_email(email): #verifica si el email ya esta registrado
-            return {'error': 'Email already registered'}, 400
-
-        new_user = facade.create_user(user_data) #crea el usuario
-        return {'id': new_user.id, 'email': new_user.email}, 201
+            return {'id': updated_user.id, 'first_name': updated_user.first_name, 'last_name': updated_user.last_name, 'email': updated_user.email}, 200

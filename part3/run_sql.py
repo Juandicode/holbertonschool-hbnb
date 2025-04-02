@@ -1,5 +1,6 @@
 import sqlite3
-
+#la funcion lo que hace es conectarse a la db , abre el script, lo ejecuta y en el if llama a los archivos schema(tablas)
+#y init data (lo que quiero insertar en el schema )
 def run_sql_script(db_path, script_path):
     conn = sqlite3.connect(db_path)
     with open(script_path, 'r') as file:
