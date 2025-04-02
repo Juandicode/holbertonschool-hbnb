@@ -8,7 +8,7 @@ api = Namespace('auth', description='Authentication operations')
 login_model = api.model('Login', {
     'email': fields.String(required=True, description='User email'),
     'password': fields.String(required=True, description='User password')
-})
+}, strict=True)
 
 @api.route('/login')
 class Login(Resource):

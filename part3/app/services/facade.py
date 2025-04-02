@@ -27,21 +27,21 @@ class HBnBFacade:
     
     # metodo para actualizar usuario
     def update_user(self, user_id, new_info):
-        user = self.user_repo.get(user_id)
-        if not user:
-            return None
-        if 'first_name' in new_info:
-            user.first_name = new_info['first_name']
-        if 'last_name' in new_info:
-            user.last_name = new_info['last_name']
-        if 'last_name' in new_info:
-            user.last_name = new_info['last_name']
-        if 'email' in new_info:
-            user.email = new_info['email']
-        if 'password' in new_info:
-            user.hash_password(new_info['password'])  # Hash the new password
-        self.user_repo.update(user_id, user)
-        return user
+        # user = self.user_repo.get(user_id)
+        # if not user:
+        #     return None
+        # if 'first_name' in new_info:
+        #     user.first_name = new_info['first_name']
+        # if 'last_name' in new_info:
+        #     user.last_name = new_info['last_name']
+        # if 'last_name' in new_info:
+        #     user.last_name = new_info['last_name']
+        # if 'email' in new_info:
+        #     user.email = new_info['email']
+        # if 'password' in new_info:
+        #     user.password = new_info['password']  # Hash the new password
+        return self.user_repo.update(user_id, new_info)
+        # return user
 
     # changes: Método para eliminar un usuario
     def delete_user(self, user_id):

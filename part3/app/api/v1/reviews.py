@@ -10,7 +10,7 @@ review_model = api.model('Review', {
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
     'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
-})
+},strict=True)
 
 @api.route('/')
 class ReviewList(Resource):

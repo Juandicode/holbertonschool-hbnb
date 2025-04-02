@@ -3,6 +3,7 @@ from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 bcrypt = Bcrypt()
 jwt = JWTManager()
@@ -11,11 +12,28 @@ db = SQLAlchemy()  # inicializo la instancia de SQLAlchemy
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API')
+    api = Api(
+        app,
+            version='1.0',
+            title='HBnB API',
+            description='HBnB Application API',
+            authorizations= 
+            {
+            'Bearer':
+                {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': 'Authorization'
+                }
+            },
+            security='Bearer'
+        )
+    
     
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)  # inicializo sql alquemy con la app
+    CORS(app)  # habilito CORS para la app 
 
     # importamos los namespaces dentro para evitar circular imports
     from app.api.v1.amenities import api as amenities_ns
