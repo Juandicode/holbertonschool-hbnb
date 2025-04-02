@@ -26,7 +26,7 @@ class Repository(ABC):
     def get_by_attribute(self, attr_name, attr_value):
         pass
 
-
+#utiliza un diccionrio para almacenar objetos 
 class InMemoryRepository(Repository):
     def __init__(self):
         self._storage = {}
@@ -52,7 +52,7 @@ class InMemoryRepository(Repository):
 
     def get_by_attribute(self, attr_name, attr_value):
         return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
-
+#utiliza SQLAlchemy para interactuar con la base de datos 
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
         self.model = model

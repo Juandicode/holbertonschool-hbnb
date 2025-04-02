@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Base Class"""
-
+#los models definen la estructura de los datos 
 
 import uuid
 from datetime import datetime
