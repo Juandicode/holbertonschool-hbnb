@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+#no pude fetchear los places de la api al index
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
 import signal
@@ -28,14 +28,15 @@ def run(server_class=HTTPServer, handler_class=CORSRequestHandler, port=8000):
     signal.signal(signal.SIGTERM, signal_handler)
     
     print(f"Starting server on port {port}...")
-    print("Press Ctrl+C to stop the server")
+    print("toca Ctrl+C para parar el server")
     
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\nShutting down server...")
+        print("\napagando server...")
         httpd.shutdown()
         sys.exit(0)
 
 if __name__ == '__main__':
     run() 
+

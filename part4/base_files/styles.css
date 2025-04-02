@@ -11,18 +11,18 @@
 }
 
 body {
-    background-color: #f4f4f4;
+    background-color: #abb44a;
     color: #333;
 }
 
 header {
-    background-color: #333;
-    color: #fff;
+    background-color: #da2222;
+    color: #340707;
     padding: 1rem;
 }
 
 nav a {
-    color: #fff;
+    color: #38c248;
     text-decoration: none;
     margin-left: 1rem;
 }
