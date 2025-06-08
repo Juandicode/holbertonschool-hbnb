@@ -121,7 +121,7 @@ This diagram shows the sequence of operations when a user creates a new place:
 4. The persistence layer saves the `Place` to the database.
 5. A response containing the newly created place is returned to the client.
 6. ![editor___mermaid_chart-2025-06-06-140700_720](https://github.com/user-attachments/assets/ad5971e7-b2d4-4c20-a1aa-d92e19883c94)
-7. 
+
 ### Review Example
 
 This sequence diagram illustrates what happens when a user posts a review:
