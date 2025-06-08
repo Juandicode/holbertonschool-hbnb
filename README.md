@@ -51,7 +51,9 @@ This layer is responsible for all data storage and retrieval, ensuring that the 
 - **Repositories:** Abstractions that translate between objects in code and records in the database.
 - **Database Connectors & Transaction Managers:** Utilities to open connections, manage transactions (commit/rollback), and handle retries or failures.
 - ![highlevelpackagediagram drawio_480](https://github.com/user-attachments/assets/3fa99ff3-8dc8-4fe0-afd5-52f575e4a7fe)
+- 
 - We also have a mermaid chart version in which we specify a bit more the content of each layer.
+- 
 - ![image](https://github.com/user-attachments/assets/12f78c08-1609-48c9-8ceb-d252a32e67fd)
 - 
 - ### Class Diagram
