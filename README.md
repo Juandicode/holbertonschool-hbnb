@@ -109,9 +109,9 @@ This diagram illustrates each step from when a new user submits the registration
 3. **Business Processing**: The Registration Facade checks for existing users, applies hashing to the password, and creates a `User` entity.
 4. **Persistence**: The User Repository saves the new record to the database.
 5. **Response**: A success message (or error) is returned to the client.
-6. ![editor___mermaid_chart-2025-06-06-135630_720](https://github.com/user-attachments/assets/6487fdff-0ce7-4b80-acff-d8394a2ea1e3)
-7. 
-8. ### Create Place Example
+![editor___mermaid_chart-2025-06-06-135630_720](https://github.com/user-attachments/assets/6487fdff-0ce7-4b80-acff-d8394a2ea1e3)
+ 
+### Create Place Example
 
 This diagram shows the sequence of operations when a user creates a new place:
 
@@ -120,7 +120,7 @@ This diagram shows the sequence of operations when a user creates a new place:
 3. The business logic processes the data and creates a `Place` object, associating it with the user.
 4. The persistence layer saves the `Place` to the database.
 5. A response containing the newly created place is returned to the client.
-6. ![editor___mermaid_chart-2025-06-06-140700_720](https://github.com/user-attachments/assets/ad5971e7-b2d4-4c20-a1aa-d92e19883c94)
+![editor___mermaid_chart-2025-06-06-140700_720](https://github.com/user-attachments/assets/ad5971e7-b2d4-4c20-a1aa-d92e19883c94)
 
 ### Review Example
 
@@ -133,7 +133,7 @@ This sequence diagram illustrates what happens when a user posts a review:
 5. The API returns a confirmation ![editor___mermaid_chart-2025-06-06-141431_720](https://github.com/user-attachments/assets/6af8ee15-7c94-4ca0-8574-7c97007a6304)
 or the created review object.
 
-7. ### List of Places Request Example
+### List of Places Request Example
 
 This diagram shows what happens when a user requests a list of available places:
 
