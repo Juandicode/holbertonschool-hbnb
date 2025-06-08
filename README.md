@@ -91,6 +91,7 @@ The class diagram illustrates the key entities in the system and how they relate
 - A **Place** can accumulate multiple **Review** entries, representing feedback from different users.
 - **Place** and **Amenity** share a many-to-many relationship: each place can offer multiple amenities, and each amenity can apply to multiple places.
 - Each **Review** is linked to exactly one **User** (the reviewer) and one **Place** (the subject), enforcing referential integrity in the feedback process.
+
 ![Editor___Mermaid_Chart-2025-06-04-170558_(2)](https://github.com/user-attachments/assets/36b77710-2ed1-4f03-954e-4cbda1a414e7)
 
 ### Sequence Diagrams
@@ -110,6 +111,7 @@ This diagram illustrates each step from when a new user submits the registration
 3. **Business Processing**: The Registration Facade checks for existing users, applies hashing to the password, and creates a `User` entity.
 4. **Persistence**: The User Repository saves the new record to the database.
 5. **Response**: A success message (or error) is returned to the client.
+
 ![editor___mermaid_chart-2025-06-06-135630_720](https://github.com/user-attachments/assets/6487fdff-0ce7-4b80-acff-d8394a2ea1e3)
  
 ### Create Place Example
@@ -121,6 +123,7 @@ This diagram shows the sequence of operations when a user creates a new place:
 3. The business logic processes the data and creates a `Place` object, associating it with the user.
 4. The persistence layer saves the `Place` to the database.
 5. A response containing the newly created place is returned to the client.
+
 ![editor___mermaid_chart-2025-06-06-140700_720](https://github.com/user-attachments/assets/ad5971e7-b2d4-4c20-a1aa-d92e19883c94)
 
 ### Review Example
@@ -131,8 +134,9 @@ This sequence diagram illustrates what happens when a user posts a review:
 2. The API service authenticates the user and validates the input.
 3. The business logic creates a `Review` object, linking it to both the `User` and `Place`.
 4. The persistence layer stores the review in the database.
-5. The API returns a confirmation ![editor___mermaid_chart-2025-06-06-141431_720](https://github.com/user-attachments/assets/6af8ee15-7c94-4ca0-8574-7c97007a6304)
-or the created review object.
+5. The API returns a confirmation or the created review object.
+
+![editor___mermaid_chart-2025-06-06-141431_720](https://github.com/user-attachments/assets/6af8ee15-7c94-4ca0-8574-7c97007a6304)
 
 ### List of Places Request Example
 
