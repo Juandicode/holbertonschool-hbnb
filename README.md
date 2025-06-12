@@ -147,6 +147,7 @@ This diagram shows what happens when a user requests a list of available places:
 3. The business logic requests the data from the persistence layer.
 4. The database returns a list of `Place` objects.
 5. The API formats and sends the list back to the client.
+
 ![editor___mermaid_chart-2025-06-06-142358_720](https://github.com/user-attachments/assets/4d4f2bb4-669f-4ee3-8aef-1e4be3e32b81)
 
 ## Overall Purpose
