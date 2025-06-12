@@ -1,3 +1,4 @@
+![IMG_6431](https://github.com/user-attachments/assets/944aa549-f562-4ff2-a964-74e949a307f4)
 # HBNB Documentation
 
 ## Introduction & Objectives
@@ -50,12 +51,12 @@ This layer is responsible for all data storage and retrieval, ensuring that the 
 - **Repositories:** Abstractions that translate between objects in code and records in the database.
 - **Database Connectors & Transaction Managers:** Utilities to open connections, manage transactions (commit/rollback), and handle retries or failures.
 
-![highlevelpackagediagram.drawio_480.png](attachment:b46f97b1-b43a-4d70-8e45-c9dfe21245df:highlevelpackagediagram.drawio_480.png)
+![highlevelpackagediagram drawio_480](https://github.com/user-attachments/assets/3fa99ff3-8dc8-4fe0-afd5-52f575e4a7fe)
+ 
+ We also have a mermaid chart version in which we specify a bit more the content of each layer.
 
-We also have a mermaid chart version in which we specify a bit more the content of each layer.
-
-![image.png](attachment:b9fb5199-2ad2-49a7-9eac-0896993436f8:image.png)
-
+![image](https://github.com/user-attachments/assets/12f78c08-1609-48c9-8ceb-d252a32e67fd)
+  
 ### Class Diagram
 
 The class diagram illustrates the key entities in the system and how they relate to one another. It provides a clear overview of each class’s role and its connections, ensuring that developers can quickly understand the domain model.
@@ -91,7 +92,7 @@ The class diagram illustrates the key entities in the system and how they relate
 - **Place** and **Amenity** share a many-to-many relationship: each place can offer multiple amenities, and each amenity can apply to multiple places.
 - Each **Review** is linked to exactly one **User** (the reviewer) and one **Place** (the subject), enforcing referential integrity in the feedback process.
 
-![Editor _ Mermaid Chart-2025-06-04-170558 (2).png](attachment:8d8a7f78-fdd1-45aa-894a-64106dc25ff8:Editor___Mermaid_Chart-2025-06-04-170558_(2).png)
+![Editor___Mermaid_Chart-2025-06-04-170558_(2)](https://github.com/user-attachments/assets/36b77710-2ed1-4f03-954e-4cbda1a414e7)
 
 ### Sequence Diagrams
 
@@ -111,10 +112,8 @@ This diagram illustrates each step from when a new user submits the registration
 4. **Persistence**: The User Repository saves the new record to the database.
 5. **Response**: A success message (or error) is returned to the client.
 
----
-
-![editor___mermaid_chart-2025-06-06-135630_720.png](attachment:ba4141f8-5df9-4ede-8230-15461efd7f50:editor___mermaid_chart-2025-06-06-135630_720.png)
-
+![editor___mermaid_chart-2025-06-06-135630_720](https://github.com/user-attachments/assets/6487fdff-0ce7-4b80-acff-d8394a2ea1e3)
+ 
 ### Create Place Example
 
 This diagram shows the sequence of operations when a user creates a new place:
@@ -125,7 +124,7 @@ This diagram shows the sequence of operations when a user creates a new place:
 4. The persistence layer saves the `Place` to the database.
 5. A response containing the newly created place is returned to the client.
 
-![editor___mermaid_chart-2025-06-06-140700_720.png](attachment:8a149159-b2de-4718-82b1-34701ade7bba:editor___mermaid_chart-2025-06-06-140700_720.png)
+![editor___mermaid_chart-2025-06-06-140700_720](https://github.com/user-attachments/assets/ad5971e7-b2d4-4c20-a1aa-d92e19883c94)
 
 ### Review Example
 
@@ -137,7 +136,7 @@ This sequence diagram illustrates what happens when a user posts a review:
 4. The persistence layer stores the review in the database.
 5. The API returns a confirmation or the created review object.
 
-![editor___mermaid_chart-2025-06-06-141431_720.png](attachment:63791483-3625-4868-bcaf-fc519e8d64af:editor___mermaid_chart-2025-06-06-141431_720.png)
+![editor___mermaid_chart-2025-06-06-141431_720](https://github.com/user-attachments/assets/6af8ee15-7c94-4ca0-8574-7c97007a6304)
 
 ### List of Places Request Example
 
@@ -148,8 +147,7 @@ This diagram shows what happens when a user requests a list of available places:
 3. The business logic requests the data from the persistence layer.
 4. The database returns a list of `Place` objects.
 5. The API formats and sends the list back to the client.
-
-![editor___mermaid_chart-2025-06-06-142358_720.png](attachment:9c494d6d-5725-445f-b614-25283043febe:editor___mermaid_chart-2025-06-06-142358_720.png)
+![editor___mermaid_chart-2025-06-06-142358_720](https://github.com/user-attachments/assets/4d4f2bb4-669f-4ee3-8aef-1e4be3e32b81)
 
 ## Overall Purpose
 
@@ -163,4 +161,6 @@ This dual perspective is crucial for:
 - Ensuring alignment between the codebase and the original system design
 - Supporting long-term maintainability and collaboration
 
-Ultimately, these visual models turn abstract code into something concrete and understandable, ensuring that everyone on the team technical or not can speak the same language when it comes to the system’s design.
+Ultimately, these visual models turn abstract code into something concrete and under, ensuring that everyone on the team technical or not can speak the same language when it comes to the system’s design.
+
+
