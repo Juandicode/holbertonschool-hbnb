@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from .base import BaseModel
-
+import uuid
 class Review(BaseModel):
     def __init__(self, text: str, rating: int, place, user):   
         super().__init__()

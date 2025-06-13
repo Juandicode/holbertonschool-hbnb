@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Place class"""
 from .base import BaseModel
-
+import uuid
 class Place(BaseModel):
     """Place model"""
     def __init__(self, title: str, price: float, latitude: float, longitude: float, owner: User, description: str = ""):

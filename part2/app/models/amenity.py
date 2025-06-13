@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from .base import BaseModel
-
+import uuid
 class Amenity(BaseModel):
     def __init__(self, name: str):
         super().__init__()

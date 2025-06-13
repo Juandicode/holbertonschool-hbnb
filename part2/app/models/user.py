@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 """User class"""
 
 import uuid
