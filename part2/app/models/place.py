@@ -2,9 +2,10 @@
 """Place class"""
 from .base import BaseModel
 import uuid
+
 class Place(BaseModel):
     """Place model"""
-    def __init__(self, title: str, price: float, latitude: float, longitude: float, owner: User, description: str = ""):
+    def __init__(self, title: str, price: float, latitude: float, longitude: float, owner, description: str = ""):
         super().__init__()  # hereda id, created_at, updated_at
         self.title = self.validate_title(title)
         self.description = description
@@ -12,7 +13,7 @@ class Place(BaseModel):
         self.latitude = self.validate_latitude(latitude)
         self.longitude = self.validate_longitude(longitude)
         self.owner = self.validate_owner(owner)
-
+        owner.add_place(self)  # Automatically add this place to the owner's list
     def validate_title(self, value):
         if not value or not isinstance(value, str) or len(value) > 100:
             raise ValueError("Title is required and cannot exceed 100 characters")
@@ -38,7 +39,7 @@ class Place(BaseModel):
             raise ValueError("Longitude must be a float between -180.0 and 180.0")
         return float(value)
 
-    def validate_owner(self, value):
+    def validate_owner(self, value):       # Local import to avoid circular import
         from .user import User
         if not isinstance(value, User):
             raise ValueError("Owner must be a valid User instance")
