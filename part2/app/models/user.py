@@ -12,15 +12,11 @@ class User(BaseModel):
         self.last_name = self.validate_name(last_name, 'Last name')
         self.email = self.validate_email(email)
         self.is_admin = is_admin
+        self.places = []        # list to store places owned by user
 
-    def validate_first_name(self, value):
+    def validate_name(self, value, field_name):
         if not value or not isinstance(value, str) or len(value) > 50:
-            raise ValueError("First name is required and cannot exceed 50 characters")
-        return value
-
-    def validate_last_name(self, value):
-        if not value or not isinstance(value, str) or len(value) > 50:
-            raise ValueError("Last name is required and cannot exceed 50 characters")
+            raise ValueError(f"{field_name} is required and cannot exceed 50 characters")
         return value
 
     def validate_email(self, value):
@@ -34,3 +30,11 @@ class User(BaseModel):
         if not isinstance(value, bool):
             raise ValueError("is_admin must be a boolean")
         return value
+    
+    def add_place(self, place):
+        """Add a place to the user list of owned places"""
+        from .place import Place    # Local import para evitar importacion circular
+        if not isinstance(place, Place):
+            raise ValueError("Can only add Place instances")
+        if place not in self.places:
+            self.places.append(place)
