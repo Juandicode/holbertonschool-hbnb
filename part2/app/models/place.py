@@ -8,7 +8,7 @@ class Place(BaseModel):
     def __init__(self, title: str, price: float, latitude: float, longitude: float, owner, description: str = ""):
         super().__init__()  # hereda id, created_at, updated_at
         self.title = self.validate_title(title)
-        self.description = description
+        self.description = self.validate_description(description)
         self.price = self.validate_price(price)
         self.latitude = self.validate_latitude(latitude)
         self.longitude = self.validate_longitude(longitude)
