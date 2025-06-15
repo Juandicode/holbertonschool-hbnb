@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Place class"""
-from .base import BaseModel
+from part2.app.models.base import BaseModel
 import uuid
 
 class Place(BaseModel):
