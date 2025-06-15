@@ -9,6 +9,9 @@ class Review(BaseModel):
         self.place = self.validate_place(place)
         self.user = self.validate_user(user)
 
+        if self not in place.reviews:
+            place.reviews.append(self)
+
     def validate_text(self, text):
         if not text:
             raise ValueError("Review text is required.")
