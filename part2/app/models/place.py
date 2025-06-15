@@ -13,7 +13,9 @@ class Place(BaseModel):
         self.latitude = self.validate_latitude(latitude)
         self.longitude = self.validate_longitude(longitude)
         self.owner = self.validate_owner(owner)
-        owner.add_place(self)  # Automatically add this place to the owner's list
+        self._amenities = []  # use a list to save amenities
+        owner.add_place(self)  # Automatically add this place to the owner list
+    
     def validate_title(self, value):
         if not value or not isinstance(value, str) or len(value) > 100:
             raise ValueError("Title is required and cannot exceed 100 characters")
@@ -52,3 +54,16 @@ class Place(BaseModel):
             raise ValueError("Solo se pueden añadir instancias de Review")
         if review not in self.reviews:
             self.reviews.append(review)
+
+    def add_amenity(self, amenity):
+        """add a  Amenity to place, validating is a valid Amenity instance"""
+        from .amenity import Amenity
+        if not isinstance(amenity, Amenity):
+            raise ValueError("Solo se aceptan instancias de Amenity")
+        if amenity not in self.amenities:
+            self.amenities.append(amenity)
+
+    def remove_amenity(self, amenity):
+        """Elimina un Amenity del lugar si existe"""
+        if amenity in self.amenities:
+            self.amenities.remove(amenity)

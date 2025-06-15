@@ -38,3 +38,11 @@ class User(BaseModel):
             raise ValueError("Can only add Place instances")
         if place not in self.places:
             self.places.append(place)
+    
+    def add_review(self, review):
+        """add a review to the user list"""
+        from .review import Review  # Import local
+        if not isinstance(review, Review):
+            raise ValueError("Solo se pueden añadir instancias de Review")
+        if review not in self.reviews:
+            self.reviews.append(review)

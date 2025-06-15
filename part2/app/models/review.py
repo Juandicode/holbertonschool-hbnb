@@ -8,7 +8,9 @@ class Review(BaseModel):
         self.rating = self.validate_rating(rating)
         self.place = self.validate_place(place)
         self.user = self.validate_user(user)
-
+        # para vincular automaticamente la reseña con el place y el user
+        place.add_review(self)
+        user.add_review(self)  
     def validate_text(self, text):
         if not text:
             raise ValueError("Review text is required.")
