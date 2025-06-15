@@ -13,7 +13,7 @@ class User(BaseModel):
         self.email = self.validate_email(email)
         self.is_admin = is_admin
         self.places = []        # list to store places owned by user
-
+        self.reviews = []  # list for reviews by user
     def validate_name(self, value, field_name):
         if not value or not isinstance(value, str) or len(value) > 50:
             raise ValueError(f"{field_name} is required and cannot exceed 50 characters")
