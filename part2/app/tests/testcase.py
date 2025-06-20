@@ -10,4 +10,4 @@ def test_user_creation():
     assert user.email == "john.doe@example.com"
     assert user.is_admin is False  # Valor por defecto
     assert len(user.places) == 0   # Lista de lugares vacía inicialmente
-    print("✅ User creation test passed!")g
+    print("✅ User creation test passed!")
