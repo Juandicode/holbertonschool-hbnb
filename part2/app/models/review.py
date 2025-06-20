@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from part2.app.models.base import BaseModel
+from part2.app.models.place import Place
 import uuid
 class Review(BaseModel):
     def __init__(self, text: str, rating: int, place, user):   
