@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Place class"""
-from part2.app.models.base import BaseModel
+from app.models.base import BaseModel
 import uuid
 
 class Place(BaseModel):
@@ -67,3 +67,30 @@ class Place(BaseModel):
         """Elimina un Amenity del lugar si existe"""
         if amenity in self.amenities:
             self.amenities.remove(amenity)
+
+    @property
+    def amenities(self):
+        return self._amenities
+
+    def to_dict(self):
+        """Returns a dictionary representation of the place"""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "price": self.price,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "owner": {
+                "id": self.owner.id,
+                "first_name": self.owner.first_name,
+                "last_name": self.owner.last_name,
+                "email": self.owner.email
+            },
+            "amenities": [
+                {"id": amenity.id, "name": amenity.name}
+                for amenity in self.amenities
+            ],
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat()
+        }
