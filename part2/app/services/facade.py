@@ -9,24 +9,9 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
-        self._seed_test_data()  # Solo para desarrollo
+
     # Placeholder method for creating a user
-    def _seed_test_data(self):
-        """Crea datos de prueba al iniciar la aplicación"""
-        try:
-            # Crear amenities
-            self.create_amenity({"name": "WiFi"})
-            self.create_amenity({"name": "Piscina"})
-        
-            # Crear usuario de prueba (IMPORTANTE)
-            test_user = self.create_user({
-                "first_name": "Test",
-                "last_name": "User",
-                "email": "test@example.com"
-        })
-            print(f"✅ Usuario de prueba creado con ID: {test_user.id}")
-        except Exception as e:
-            print(f"⚠️ Error en _seed_test_data: {str(e)}")
+
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
