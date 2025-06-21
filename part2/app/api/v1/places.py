@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from flask import request # added
+from flask import request 
 from app.services import facade
 
 api = Namespace('places', description='Place operations')
