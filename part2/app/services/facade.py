@@ -118,27 +118,105 @@ class HBnBFacade:
         return place
 
 def create_review(self, review_data):
-    # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
-    pass
+    """
+    Crea una nueva revisión con validación de datos
+    """
+    # Importación diferida para evitar circularidad
+    from app.models.review import Review
+    
+    # Validar usuario
+    user = self.user_repo.get(review_data['user_id'])
+    if not user:
+        raise ValueError("User not found")
+        
+    # Validar lugar
+    place = self.place_repo.get(review_data['place_id'])
+    if not place:
+        raise ValueError("Place not found")
+    
+    # Crear la revisión
+    try:
+        review = Review(
+            text=review_data['text'],
+            rating=review_data['rating'],
+            place=place,
+            user=user
+        )
+        
+        # Guardar en el repositorio
+        self.review_repo.add(review)
+        return review
+        
+    except ValueError as e:
+        raise ValueError(f"Validation error: {str(e)}")
+    except TypeError as e:
+        raise TypeError(f"Type error: {str(e)}")
 
 def get_review(self, review_id):
-    # Placeholder for logic to retrieve a review by ID
-    pass
+    """
+    Obtiene una revisión por su ID
+    """
+    review = self.review_repo.get(review_id)
+    if not review:
+        raise ValueError("Review not found")
+    return review
 
 def get_all_reviews(self):
-    # Placeholder for logic to retrieve all reviews
-    pass
+    """
+    Obtiene todas las revisiones existentes
+    """
+    return self.review_repo.get_all()
 
 def get_reviews_by_place(self, place_id):
-    # Placeholder for logic to retrieve all reviews for a specific place
-    pass
+    """
+    Obtiene todas las revisiones de un lugar específico
+    """
+    place = self.place_repo.get(place_id)
+    if not place:
+        raise ValueError("Place not found")
+    
+    # Asumiendo que Place tiene una propiedad reviews que lista las revisiones
+    return place.reviews
 
 def update_review(self, review_id, review_data):
-    # Placeholder for logic to update a review
-    pass
+    """
+    Actualiza una revisión existente
+    """
+    review = self.review_repo.get(review_id)
+    if not review:
+        raise ValueError("Review not found")
+    
+    try:
+        # Actualizar campos si están presentes en los datos
+        if 'text' in review_data and review_data['text'] is not None:
+            review.text = review.validate_text(review_data['text'])
+        if 'rating' in review_data and review_data['rating'] is not None:
+            review.rating = review.validate_rating(review_data['rating'])
+        
+        # Guardar cambios
+        self.review_repo.update(review)
+        return review
+        
+    except ValueError as e:
+        raise ValueError(f"Validation error: {str(e)}")
+    except TypeError as e:
+        raise TypeError(f"Type error: {str(e)}")
 
 def delete_review(self, review_id):
-    # Placeholder for logic to delete a review
-    pass
+    """
+    Elimina una revisión y sus referencias asociadas
+    """
+    review = self.review_repo.get(review_id)
+    if not review:
+        raise ValueError("Review not found")
+    
+    # Eliminar referencias del lugar y usuario
+    if review in review.place.reviews:
+        review.place.reviews.remove(review)
+    if review in review.user.reviews:
+        review.user.reviews.remove(review)
+    
+    # Eliminar del repositorio
+    self.review_repo.delete(review_id)
 
 facade = HBnBFacade()

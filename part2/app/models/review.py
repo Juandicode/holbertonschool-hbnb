@@ -2,6 +2,7 @@
 from part2.app.models.place import Place
 import uuid
 class Review(BaseModel):
+    """ Review model for places in the HBnB application """
     def __init__(self, text: str, rating: int, place, user):   
         super().__init__()
         self.text = self.validate_text(text)
