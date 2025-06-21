@@ -38,9 +38,18 @@ class PlaceList(Resource):
         data = request.get_json()
         if not data:
             api.abort(400, 'No input data provided')
-        try:
+        try:                                                    
             place = facade.create_place(data)
-            return place.to_dict(), 201
+            return {
+                'id': place.id,
+                'title': place.title,
+                'description': place.description,
+                'price': place.price,
+                'latitude': place.latitude,
+                'longitude': place.longitude,
+                'owner_id': place.owner.id,
+                'amenities': [a.id for a in place.amenities]
+            }, 201
         except ValueError as e:
             api.abort(400, str(e))
 
@@ -74,7 +83,7 @@ class PlaceResource(Resource):
             updated = facade.update_place(place_id, data)
             if not updated:
                 api.abort(404, f'Place {place_id} not found')
-            return updated.to_dict(), 200
+            return {'message': 'Place updated successfully'}, 200
         except ValueError as e:
             api.abort(400, str(e))
 

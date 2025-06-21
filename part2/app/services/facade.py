@@ -81,10 +81,37 @@ class HBnBFacade:
         return place
 
     def get_place(self, place_id):
-        return self.place_repo.get(place_id)
+        """Get place by ID with relationships"""
+        place = self.place_repo.get(place_id)
+        if place:
+            return {
+                'id': place.id,
+                'title': place.title,
+                'description': place.description,
+                'price': place.price,
+                'latitude': place.latitude,
+                'longitude': place.longitude,
+                'owner': {
+                    'id': place.owner.id,
+                    'first_name': place.owner.first_name,
+                    'last_name': place.owner.last_name,
+                    'email': place.owner.email
+                },
+                'amenities': [{
+                    'id': a.id,
+                    'name': a.name
+                } for a in place.amenities]
+            }
+        return None
 
     def get_all_places(self):
-        return self.place_repo.get_all()
+        """Get all places with basic info"""
+        return [{
+            'id': p.id,
+            'title': p.title,
+            'latitude': p.latitude,
+            'longitude': p.longitude
+        } for p in self.place_repo.get_all()]
 
     def update_place(self, place_id, place_data):
         place = self.place_repo.get(place_id)
