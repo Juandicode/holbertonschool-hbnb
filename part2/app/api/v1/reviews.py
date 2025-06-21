@@ -18,8 +18,33 @@ class ReviewList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new review"""
-        # Placeholder for the logic to register a new review
-        pass
+        review_data = api.payload
+
+        place = facade.get_place(review_data['place_id'])
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        if place.owner.id == current_user:
+            return {'error': 'You cannot review your own place'}, 400
+
+        existing_reviews = facade.get_reviews_by_place(review_data['place_id'])
+        for review in existing_reviews:
+            if review.user.id == current_user:
+                return {'error': 'You have already reviewed this place'}, 400
+
+        review_data['user_id'] = current_user
+
+        try:
+            new_review = facade.create_review(review_data)
+            return {
+                'id': new_review.id,
+                'text': new_review.text,
+                'rating': new_review.rating,
+                'user_id': new_review.user.id,
+                'place_id': new_review.place.id
+            }, 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
