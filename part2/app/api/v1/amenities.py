@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.services.facade import facade
+#from app.services.facade import facade
+from app.persistence.context import facade
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -32,25 +33,27 @@ class AmenityList(Resource):
 
 @api.route('/<string:amenity_id>')
 class AmenityResource(Resource):
-    @api.response(200, 'Amenity details retrieved successfully')
+    @api.response(200, 'Amenity details', amenity_model)
     @api.response(404, 'Amenity not found')
-    @api.marshal_with(amenity_model)
     def get(self, amenity_id):
         """Get details of a single amenity by ID"""
-        amenity = facade.get_amenity(amenity_id)
-        if not amenity:
-            api.abort(404, f'Amenity {amenity_id} not found')
-        return amenity.to_dict(), 200
+        try:
+            amenity = facade.get_amenity(amenity_id)
+            return amenity.to_dict(), 200
+        except ValueError as e:
+            api.abort(404, str(e))
 
     @api.expect(amenity_model)
-    @api.response(200, 'Amenity updated successfully')
-    @api.response(404, 'Amenity not found')
+    @api.response(200, 'Amenity updated', amenity_model)
     @api.response(400, 'Invalid input data')
+    @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
         """Update an existing amenity"""
         data = request.get_json()
-        updated = facade.update_amenity(amenity_id, data)
-        if updated is None:
-            api.abort(404, f'Amenity {amenity_id} not found')
-        return updated.to_dict(), 200
+        try:
+            updated = facade.update_amenity(amenity_id, data)
+            return updated.to_dict(), 200
+        except ValueError as e:
+            code = 404 if "not found" in str(e) else 400
+            api.abort(code, str(e))
 

@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+#from app.services import facade
 from app.models.review import Review
-
+from app.persistence.context import facade      #modificacion de los imports
 api = Namespace('reviews', description='Review operations')
 
 # Define the review model for input validation and documentation

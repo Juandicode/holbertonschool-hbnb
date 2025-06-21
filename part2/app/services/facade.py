@@ -30,8 +30,12 @@ class HBnBFacade:
         self.amenity_repo.add(amenity)
         return amenity
 
+    # services/facade.py
     def get_amenity(self, amenity_id):
+        """Get amenity by ID"""
         amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            raise ValueError(f"Amenity {amenity_id} not found")
         return amenity
 
     def get_all_amenities(self):
