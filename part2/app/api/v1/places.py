@@ -77,3 +77,4 @@ class PlaceResource(Resource):
             return updated.to_dict(), 200
         except ValueError as e:
             api.abort(400, str(e))
+
