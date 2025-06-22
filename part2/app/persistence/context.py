@@ -8,7 +8,7 @@ class DataContext:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.facade = HBnBFacade()
-            cls._instance.init_test_data()
+        #    cls._instance.init_test_data()
         return cls._instance
     
     def init_test_data(self):
