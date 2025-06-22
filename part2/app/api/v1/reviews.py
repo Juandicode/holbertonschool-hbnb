@@ -42,7 +42,7 @@ review_list_model = api.model('ReviewList', {
 @api.route('/')
 class ReviewList(Resource):
     @api.expect(review_input_model)
-    @api.marshal_with(review_response_model, code=201)
+    @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     @api.response(404, 'User or Place not found')
     def post(self):
@@ -50,27 +50,28 @@ class ReviewList(Resource):
         try:
             data = request.get_json()
             review = hbnb_facade.create_review(data)
-            return review, 201
+            return review.to_dict(), 201
         except ValueError as e:
             api.abort(400, str(e))
         except Exception as e:
             api.abort(404, str(e))
 
-    @api.marshal_list_with(review_list_model)
+    @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
         """Get all reviews"""
-        return hbnb_facade.get_all_reviews()
+        reviews = hbnb_facade.get_all_reviews()
+        return [r.to_dict() for r in reviews], 200
 
 @api.route('/<string:review_id>')
 class ReviewResource(Resource):
-    @api.marshal_with(review_response_model)
+    @api.response(200, 'Review details')
     @api.response(404, 'Review not found')
     def get(self, review_id):
         """Get a review by ID"""
         review = hbnb_facade.get_review(review_id)
         if not review:
             api.abort(404, 'Review not found')
-        return review
+        return review.to_dict(), 200
 
     @api.expect(review_input_model)
     @api.response(200, 'Review updated successfully')
@@ -81,7 +82,7 @@ class ReviewResource(Resource):
         try:
             data = request.get_json()
             review = hbnb_facade.update_review(review_id, data)
-            return {'message': 'Review updated successfully'}, 200
+            return review.to_dict(), 200
         except ValueError as e:
             api.abort(400, str(e))
         except Exception as e:
@@ -99,17 +100,12 @@ class ReviewResource(Resource):
 
 @api.route('/places/<string:place_id>/reviews')
 class PlaceReviewList(Resource):
-    @api.marshal_list_with(api.model('PlaceReview', {
-        'id': fields.String,
-        'text': fields.String,
-        'rating': fields.Integer,
-        'user_id': fields.String,
-        'user_name': fields.String
-    }))
+    @api.response(200, 'List of place reviews retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a place"""
         try:
-            return hbnb_facade.get_reviews_by_place(place_id)
+            reviews = hbnb_facade.get_reviews_by_place(place_id)
+            return [r.to_dict() for r in reviews], 200
         except ValueError as e:
             api.abort(404, str(e))

@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-#from app.services.facade import facade
-from app.persistence.context import facade
+from app.services.facade import facade
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -25,7 +24,6 @@ class AmenityList(Resource):
             api.abort(400, str(e))
 
     @api.response(200, 'List of amenities retrieved successfully')
-    @api.marshal_list_with(amenity_model)
     def get(self):
         """Retrieve a list of all amenities"""
         amenities = facade.get_all_amenities()
@@ -33,7 +31,7 @@ class AmenityList(Resource):
 
 @api.route('/<string:amenity_id>')
 class AmenityResource(Resource):
-    @api.response(200, 'Amenity details', amenity_model)
+    @api.response(200, 'Amenity details')
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
         """Get details of a single amenity by ID"""
@@ -44,7 +42,7 @@ class AmenityResource(Resource):
             api.abort(404, str(e))
 
     @api.expect(amenity_model)
-    @api.response(200, 'Amenity updated', amenity_model)
+    @api.response(200, 'Amenity updated')
     @api.response(400, 'Invalid input data')
     @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
@@ -56,4 +54,3 @@ class AmenityResource(Resource):
         except ValueError as e:
             code = 404 if "not found" in str(e) else 400
             api.abort(code, str(e))
-
