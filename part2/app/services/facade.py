@@ -43,9 +43,7 @@ class HBnBFacade:
         if not amenity:
             return None
 
-        if 'name' in amenity_data:
-            amenity.name = amenity.validate_name(amenity_data['name'])
-
+        amenity.update_from_dict(amenity_data)
         self.amenity_repo.update(amenity)
         return amenity
 

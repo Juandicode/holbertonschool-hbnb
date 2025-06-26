@@ -23,3 +23,6 @@ class Amenity(BaseModel):
             'updated_at': self.updated_at.isoformat() if hasattr(self, 'updated_at') else None
         }
 
+    def update_from_dict(self, data):
+        if 'name' in data:
+            self.name = self.validate_name(data['name'])
