@@ -94,3 +94,23 @@ class Place(BaseModel):
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat()
         }
+
+    def update_from_dict(self, data: dict, amenity_repo):
+        if 'title' in data:
+            self.title = self.validate_title(data['title'])
+        if 'description' in data:
+            self.description = self.validate_description(data['description'])
+        if 'price' in data:
+            self.price = self.validate_price(data['price'])
+        if 'latitude' in data:
+            self.latitude = self.validate_latitude(data['latitude'])
+        if 'longitude' in data:
+            self.longitude = self.validate_longitude(data['longitude'])
+
+        if 'amenities' in data:
+            self._amenities = []
+            for amenity_id in data['amenities']:
+                amenity = amenity_repo.get(amenity_id)
+                if not amenity:
+                    raise ValueError(f"Amenity {amenity_id} not found")
+                self.add_amenity(amenity)

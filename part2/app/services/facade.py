@@ -116,26 +116,7 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
-
-        if 'title' in place_data:
-            place.title = place.validate_title(place_data['title'])
-        if 'description' in place_data:
-            place.description = place.validate_description(place_data['description'])
-        if 'price' in place_data:
-            place.price = place.validate_price(place_data['price'])
-        if 'latitude' in place_data:
-            place.latitude = place.validate_latitude(place_data['latitude'])
-        if 'longitude' in place_data:
-            place.longitude = place.validate_longitude(place_data['longitude'])
-
-        if 'amenities' in place_data:
-            place._amenities = []
-            for amenity_id in place_data['amenities']:
-                amenity = self.amenity_repo.get(amenity_id)
-                if not amenity:
-                    raise ValueError(f"Amenity {amenity_id} not found")
-                place.add_amenity(amenity)
-
+        place.update_from_dict(place_data, self.amenity_repo)
         self.place_repo.update(place)
         return place
 
