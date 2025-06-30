@@ -2,15 +2,17 @@
 """User class"""
 
 import uuid
+from app import bcrypt # added to hash password, shared bycript instance
 from app.models.base import BaseModel
 
 class User(BaseModel):
-    def __init__(self, first_name: str, last_name: str, email: str, is_admin: bool = False):
+    def __init__(self, first_name: str, last_name: str, email: str, password: str, is_admin: bool = False):
         super().__init__()
         """the super inherits from baseclass"""
         self.first_name = self.validate_name(first_name, 'First Name')
         self.last_name = self.validate_name(last_name, 'Last name')
         self.email = self.validate_email(email)
+        self._password_hash = self.set_password(password) # added to store the hashed password
         self.is_admin = is_admin
         self.places = []        # list to store places owned by user
         self.reviews = []  # list for reviews by user
@@ -30,7 +32,19 @@ class User(BaseModel):
         if not isinstance(value, bool):
             raise ValueError("is_admin must be a boolean")
         return value
-    
+
+    def hash_password(self, password: str):
+        """hashes password before storing it in self. password"""
+        if not password or not isinstance(password, str) or len(password) < 6:
+            raise ValueError("Password must be a string with at least 6 characters.")
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8') # correct way
+
+    def verify_password(self, password: str) -> bool: # verifies the password
+        """verifies a password against the stored hash"""
+        if not password:
+            return False
+        return bcrypt.check_password_hash(sef.password, password) # ues flask-bcrpyt
+
     def add_place(self, place):
         """Add a place to the user list of owned places"""
         from .place import Place    # Local import para evitar importacion circular
