@@ -1,2 +1,4 @@
 flask 
 flask_restx
+flask-bcrypt
+flask-jwt-extended
