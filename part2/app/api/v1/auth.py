@@ -1,38 +1,39 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask import request
 from app.services import facade
 
-api = Namespace('auth', description='Authentication operations')
+auth_ns = Namespace('auth', description='Authentication operations')
 
-# Model for input validation
-login_model = api.model('Login', {
+# Modelo de login
+login_model = auth_ns.model('Login', {
     'email': fields.String(required=True, description='User email'),
     'password': fields.String(required=True, description='User password')
 }, strict=True)
 
-@api.route('/login')
+# Ruta /login
+@auth_ns.route('/login')
 class Login(Resource):
-    @api.expect(login_model)
+    @auth_ns.expect(login_model)
     def post(self):
-        """Authenticate user and return a JWT token"""
-        credentials = api.payload  # Get the email and password from the request payload
-        
-       
+        credentials = request.json
         user = facade.get_user_by_email(credentials['email'])
-        
-       
+
         if not user or not user.verify_password(credentials['password']):
             return {'error': 'Invalid credentials'}, 401
 
-        access_token = create_access_token(identity={'id': str(user.id), 'is_admin': user.is_admin})
-        
-        
+        access_token = create_access_token(identity={
+            'id': str(user.id),
+            'is_admin': user.is_admin
+        })
         return {'access_token': access_token}, 200
-    
-@api.route('/protected')
+
+# Ruta protegida
+@auth_ns.route('/protected')
 class ProtectedResource(Resource):
     @jwt_required()
     def get(self):
-        """A protected endpoint that requires a valid JWT token"""
-        current_user = get_jwt_identity()  # Retrieve the user's identity from the token
-        return {'message': f'Hello, user {current_user["id"]}'}, 200@api.route('/protected')
+        current_user = get_jwt_identity()
+        return {'message': f"Hello, user {current_user['id']}"}, 200
+
+# Exporta el namespace como api
+api = auth_ns
