@@ -48,7 +48,7 @@ class User(BaseModel):
         from app import bcrypt
         if not password:
             return False
-        return bcrypt.check_password_hash(sef.password, password) # ues flask-bcrpyt
+        return bcrypt.check_password_hash(self.password, password) # ues flask-bcrpyt
 
     def add_place(self, place):
         """Add a place to the user list of owned places"""
@@ -65,3 +65,9 @@ class User(BaseModel):
             raise ValueError("Solo se pueden añadir instancias de Review")
         if review not in self.reviews:
             self.reviews.append(review)
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'is_admin': self.is_admin
+        }
