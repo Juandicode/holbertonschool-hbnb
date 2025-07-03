@@ -1,5 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.facade import facade as hbnb_facade
 
 api = Namespace('reviews', description='Review operations')
@@ -41,6 +42,7 @@ review_list_model = api.model('ReviewList', {
 
 @api.route('/')
 class ReviewList(Resource):
+    @jwt_required()
     @api.expect(review_input_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
@@ -49,6 +51,8 @@ class ReviewList(Resource):
         """Create a new review"""
         try:
             data = request.get_json()
+            current_user = get_jwt_identity()
+            data['user_id'] = current_user  # 🔒 Aseguramos que la review sea del usuario autenticado
             review = hbnb_facade.create_review(data)
             return review.to_dict(), 201
         except ValueError as e:
@@ -73,26 +77,47 @@ class ReviewResource(Resource):
             api.abort(404, 'Review not found')
         return review.to_dict(), 200
 
+    @jwt_required()
     @api.expect(review_input_model)
     @api.response(200, 'Review updated successfully')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')  # 🔒 Si no es el autor
     @api.response(404, 'Review not found')
     def put(self, review_id):
-        """Update a review"""
+        """Update a review (only by the owner)"""
         try:
+            review = hbnb_facade.get_review(review_id)
+            if not review:
+                api.abort(404, 'Review not found')
+
+            current_user = get_jwt_identity()
+            if review['user']['id'] != current_user:
+                api.abort(403, 'Unauthorized action')  # 🔒 Validación de autor
+
             data = request.get_json()
-            review = hbnb_facade.update_review(review_id, data)
-            return review.to_dict(), 200
+            data['user_id'] = current_user  # aseguramos que el user_id es el del token
+            updated_review = hbnb_facade.update_review(review_id, data)
+            return updated_review.to_dict(), 200
         except ValueError as e:
             api.abort(400, str(e))
         except Exception as e:
             api.abort(404, str(e))
-
+    
+    @jwt_required()
     @api.response(200, 'Review deleted successfully')
+    @api.response(403, 'Unauthorized action')  # 🔒 Si no es el autor
     @api.response(404, 'Review not found')
     def delete(self, review_id):
-        """Delete a review"""
+        """Delete a review (only by the owner)"""
         try:
+            review = hbnb_facade.get_review(review_id)
+            if not review:
+                api.abort(404, 'Review not found')
+
+            current_user = get_jwt_identity()
+            if review['user']['id'] != current_user:
+                api.abort(403, 'Unauthorized action')  # 🔒 Validación de autor
+
             hbnb_facade.delete_review(review_id)
             return {'message': 'Review deleted successfully'}, 200
         except ValueError as e:
@@ -109,3 +134,4 @@ class PlaceReviewList(Resource):
             return [r.to_dict() for r in reviews], 200
         except ValueError as e:
             api.abort(404, str(e))
+
