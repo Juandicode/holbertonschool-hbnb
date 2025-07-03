@@ -120,6 +120,17 @@ class HBnBFacade:
         self.place_repo.update(place)
         return place
 
+    def delete_place(self, place_id):
+        """delete a place and all its associated reviews"""
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError(f"place {place_id} not found")
+
+        for review in list(place.reviews):
+            self.delete_review(review.id)
+
+        self.place_repo.delete(place_id)
+
     # Review methods
     def create_review(self, review_data):
         """Create a new review with validation"""

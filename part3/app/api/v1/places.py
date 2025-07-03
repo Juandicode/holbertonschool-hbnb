@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
-from flask import request 
+from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
 
 
@@ -31,6 +32,7 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class PlaceList(Resource):
+    @jwt_required()
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
@@ -39,6 +41,10 @@ class PlaceList(Resource):
         data = request.get_json()
         if not data:
             api.abort(400, 'No input data provided')
+
+        current_user = get_jwt_identity()
+        data['owner_id'] = current_user
+
         try:                                                    
             place = facade.create_place(data)
             return {
@@ -70,7 +76,8 @@ class PlaceResource(Resource):
         if not place:
             api.abort(404, f'place {place_id} not found')
         return place.to_dict(), 200
-
+    
+    @jwt_required()
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
@@ -87,4 +94,21 @@ class PlaceResource(Resource):
             return {'message': 'Place updated successfully'}, 200
         except ValueError as e:
             api.abort(400, str(e))
+
+    @jwt_required()
+    @api.response(200, 'Place deleted successfully')
+    @api.response(404, 'Place not found')
+    @api.response(403, 'Unauthorized action')
+    def delete(self, place_id):
+        """delete a place"""
+        place = facade.get_place(place_id)
+        if not place:
+            api.abort(404, f'place {place_id} not found')
+
+        current_user = get_jwt_identity()
+        if place['owner']['id'] != current_user:
+            api.abort(403, 'Unauthorized action')
+
+        facade.delete_place(place_id)
+        return {'message': 'Place deleted successfully'}, 200
 
