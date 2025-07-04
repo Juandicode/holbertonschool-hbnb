@@ -81,21 +81,23 @@ class ReviewResource(Resource):
     @api.expect(review_input_model)
     @api.response(200, 'Review updated successfully')
     @api.response(400, 'Invalid input data')
-    @api.response(403, 'Unauthorized action')  # 🔒 Si no es el autor
+    @api.response(403, 'Unauthorized action')
     @api.response(404, 'Review not found')
     def put(self, review_id):
-        """Update a review (only by the owner)"""
+        """Update a review (owner or admin only)"""
         try:
             review = hbnb_facade.get_review(review_id)
             if not review:
                 api.abort(404, 'Review not found')
 
             current_user = get_jwt_identity()
-            if review['user']['id'] != current_user:
-                api.abort(403, 'Unauthorized action')  # 🔒 Validación de autor
+            is_admin = current_user.get('is_admin', False)  # 🔒
+
+            if not is_admin and review['user']['id'] != current_user['id']:
+                api.abort(403, 'Unauthorized action')  # 🔒 Validación extendida
 
             data = request.get_json()
-            data['user_id'] = current_user  # aseguramos que el user_id es el del token
+            data['user_id'] = review['user']['id']  # 🔒 no se permite cambiar autor
             updated_review = hbnb_facade.update_review(review_id, data)
             return updated_review.to_dict(), 200
         except ValueError as e:
@@ -105,18 +107,20 @@ class ReviewResource(Resource):
     
     @jwt_required()
     @api.response(200, 'Review deleted successfully')
-    @api.response(403, 'Unauthorized action')  # 🔒 Si no es el autor
+    @api.response(403, 'Unauthorized action')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
-        """Delete a review (only by the owner)"""
+        """Delete a review (owner or admin only)"""
         try:
             review = hbnb_facade.get_review(review_id)
             if not review:
                 api.abort(404, 'Review not found')
 
             current_user = get_jwt_identity()
-            if review['user']['id'] != current_user:
-                api.abort(403, 'Unauthorized action')  # 🔒 Validación de autor
+            is_admin = current_user.get('is_admin', False)  # 🔒
+
+            if not is_admin and review['user']['id'] != current_user['id']:
+                api.abort(403, 'Unauthorized action')  # 🔒 Validación extendida
 
             hbnb_facade.delete_review(review_id)
             return {'message': 'Review deleted successfully'}, 200

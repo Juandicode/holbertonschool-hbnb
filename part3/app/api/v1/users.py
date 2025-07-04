@@ -21,14 +21,17 @@ user_update_model = api.model('UserUpdate', {
 
 @api.route('/')
 class UserList(Resource):
+    @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered or invalid input')
     def post(self):
-        """Register a new user"""
-        user_data = api.payload
+        """Register a new user (admin only)"""
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
 
-        # Email uniqueness check
+        user_data = api.payload
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
             api.abort(400, 'Email already registered')
@@ -40,7 +43,6 @@ class UserList(Resource):
             'last_name': new_user.last_name,
             'email': new_user.email
         }, 201
-
 @api.route('/<string:user_id>')
 class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
@@ -57,34 +59,41 @@ class UserResource(Resource):
             'email': user.email
         }, 200
 
-    @jwt_required()  # Only authenticated users can modify their info
-    @api.expect(user_update_model)
+
+    @jwt_required()
+    @api.expect(user_model)  # permite modificar también email y password
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid update fields')
-    @api.response(403, 'Unauthorized action')
+    @api.response(403, 'Admin privileges required')
     @api.response(404, 'User not found')
     def put(self, user_id):
-        """Modify user information (excluding email and password)"""
-        current_user = get_jwt_identity()  # Get user ID from JWT
-        if current_user != user_id:
-            api.abort(403, 'Unauthorized action')  # Prevent modifying others
+        """Modify any user (admin only, including email/password)"""
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin'):
+            api.abort(403, 'Admin privileges required')
 
         data = request.get_json() or {}
-        # Prevent modifying email or password
-        if 'email' in data or 'password' in data:
-            api.abort(400, 'You cannot modify email or password')
+
+        if 'email' in data:
+            existing = facade.get_user_by_email(data['email'])
+            if existing and existing.id != user_id:
+                api.abort(400, 'Email already in use')
 
         user = facade.get_user(user_id)
         if not user:
             api.abort(404, 'User not found')
 
-        # Apply updates
+        # Aplicar cambios
         if 'first_name' in data:
-            user.first_name = data['first_name']  # Update first_name
+            user.first_name = data['first_name']
         if 'last_name' in data:
-            user.last_name = data['last_name']    # Update last_name
-        facade.user_repo.update(user)  # Persist changes
+            user.last_name = data['last_name']
+        if 'email' in data:
+            user.email = data['email']
+        if 'password' in data:
+            user.set_password(data['password'])  # asegurate que tu modelo tenga este método
 
+        facade.user_repo.update(user)
         return {
             'id': user.id,
             'first_name': user.first_name,
