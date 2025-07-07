@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy         # Import SQLAlchemy
 from config import DevelopmentConfig
-
+from flask import Flask, Blueprint, jsonify
 bcrypt = Bcrypt()
 jwt    = JWTManager()
 db     = SQLAlchemy()                          # Crear instancia de SQLAlchemy
@@ -17,12 +17,12 @@ def create_app(config_class=DevelopmentConfig):
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)                            # Conectar SQLAlchemy con Flask
-
+    blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
     api = Api(app,
-              version='1.0',
-              title='HBnB API',
-              description='API for managing places, users, reviews, and amenities')
-
+            version='1.0',
+            title='HBnB API',
+            description='API for managing places, users, reviews, and amenities',
+            prefix='/api/v1')
     # JWT error handlers
     @jwt.unauthorized_loader
     def unauthorized_callback(callback):
@@ -52,6 +52,8 @@ def create_app(config_class=DevelopmentConfig):
     api.add_namespace(reviews_ns,   path='/reviews')
     api.add_namespace(amenities_ns, path='/amenities')
     api.add_namespace(auth_ns,      path='/auth')
+
+    app.register_blueprint(blueprint)
 
     return app
 

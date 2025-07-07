@@ -1,4 +1,4 @@
-from app.persistence.repository import InMemoryRepository
+from app.persistence.user_repository import UserRepository
 from app.persistence.sqlalchemy_repository import SQLAlchemyRepository
 from app.models.user    import User
 from app.models.amenity import Amenity
@@ -7,13 +7,12 @@ from app.models.review  import Review
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo    = SQLAlchemyRepository(User)
+        self.user_repo    = UserRepository()
         self.place_repo   = SQLAlchemyRepository(Place)
         self.review_repo  = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
 
 
-    # User methods
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -23,8 +22,8 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
-
+        return self.user_repo.get_user_by_email(email)
+    
     # Amenity methods
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
