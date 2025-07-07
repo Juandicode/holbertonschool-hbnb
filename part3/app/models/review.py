@@ -1,16 +1,26 @@
 #!/usr/bin/python3
 """Review class"""
+
 from app.models.base import BaseModel
 
 class Review(BaseModel):
-    def __init__(self, text: str, rating: int, user, place):
+    def __init__(self, text: str, rating: int, user_id: str, place_id: str):
         super().__init__()
+        # Validate and assign text and rating
         self.text = self.validate_text(text)
         self.rating = self.validate_rating(rating)
-        self.user = self.validate_user(user)
-        self.place = self.validate_place(place)
 
-        # relaciones
+        # Resolve user and place by ID via the facade
+        from app.services.facade import facade
+        user = facade.get_user(user_id)
+        if not user:
+            raise ValueError(f"User {user_id} not found")
+        place = facade.get_place(place_id)
+        if not place:
+            raise ValueError(f"Place {place_id} not found")
+        self.user = user
+        self.place = place
+
         user.add_review(self)
         place.add_review(self)
 
@@ -22,18 +32,6 @@ class Review(BaseModel):
     def validate_rating(self, value):
         if not isinstance(value, int) or not (1 <= value <= 5):
             raise ValueError("Rating must be an integer between 1 and 5")
-        return value
-
-    def validate_user(self, value):
-        from .user import User
-        if not isinstance(value, User):
-            raise ValueError("User must be a valid User instance")
-        return value
-
-    def validate_place(self, value):
-        from .place import Place
-        if not isinstance(value, Place):
-            raise ValueError("Place must be a valid Place instance")
         return value
 
     def to_dict(self):
