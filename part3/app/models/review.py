@@ -1,9 +1,21 @@
 #!/usr/bin/python3
 """Review class"""
-
+from flask_sqlalchemy import SQLAlchemy
 from app.models.base import BaseModel
+from app import db
+from datetime import datetime
 
 class Review(BaseModel):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    text = db.Column(db.String(1024), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
+
+    place = db.relationship('Place', backref='reviews', lazy=True)
+
     def __init__(self, text: str, rating: int, user_id: str, place_id: str):
         super().__init__()
         # Validate and assign text and rating

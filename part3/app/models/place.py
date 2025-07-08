@@ -2,9 +2,28 @@
 """Place class"""
 from app.models.base import BaseModel
 import uuid
+from app import db
+from flask_sqlalchemy import SQLAlchemy
+
+place_amenity = db.Table('place_amenity',
+    db.Column('place_id', db.Integer, db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.Integer, db.ForeignKey('amenities.id'), primary_key=True)
+)
 
 class Place(BaseModel):
     """Place model"""
+
+    __tablename__ = 'places'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(512), nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(36), nullable=False)
+
+
     def __init__(self, title: str, price: float, latitude: float, longitude: float, owner, description: str = ""):
         super().__init__()  # hereda id, created_at, updated_at
         self.title = self.validate_title(title)
@@ -13,9 +32,11 @@ class Place(BaseModel):
         self.latitude = self.validate_latitude(latitude)
         self.longitude = self.validate_longitude(longitude)
         self.owner = self.validate_owner(owner)
-        self._amenities = []  # use a list to save amenities
+        self._amenities = []  # list for storing amenities
+        self.reviews = []  # list for storing reviews
         owner.add_place(self)  # Automatically add this place to the owner list
     
+ 
     def validate_title(self, value):
         if not value or not isinstance(value, str) or len(value) > 100:
             raise ValueError("Title is required and cannot exceed 100 characters")
