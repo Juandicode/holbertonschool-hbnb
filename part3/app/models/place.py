@@ -138,3 +138,6 @@ class Place(BaseModel):
                 if not amenity:
                     raise ValueError(f"Amenity {amenity_id} not found")
                 self.add_amenity(amenity)
+
+
+from app.models.amenity import Amenity

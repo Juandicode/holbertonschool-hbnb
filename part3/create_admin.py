@@ -4,7 +4,7 @@ from app.models.user import User
 app = create_app()
 app.app_context().push()
 
-# Opcional: eliminar admin previo
+
 user = User.query.filter_by(email="admin@example.com").first()
 if user:
     db.session.delete(user)
@@ -14,7 +14,7 @@ admin = User(
     first_name="Admin",
     last_name="User",
     email="admin@example.com",
-    password="admin123",  # contraseña válida
+    password="admin123",
     is_admin=True
 )
 
