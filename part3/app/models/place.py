@@ -23,6 +23,9 @@ class Place(BaseModel):
     longitude = db.Column(db.Float, nullable=False)
     owner_id = db.Column(db.String(36), nullable=False)
 
+    owner = db.relationship('User', backref='places', lazy=True)
+    reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
+    amenities = db.relationship('Amenity', secondary='place_amenity', backref='places', lazy=True)
 
     def __init__(self, title: str, price: float, latitude: float, longitude: float, owner, description: str = ""):
         super().__init__()  # hereda id, created_at, updated_at

@@ -13,6 +13,9 @@ class User(BaseModel, db.Model):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)    
     
+    places = db.relationship('Place', backref='user', lazy=True, cascade='all, delete-orphan')
+    reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
+    
     def __init__(self, first_name: str, last_name: str, email: str, password: str, is_admin: bool = False):
         super().__init__()
         """the super inherits from baseclass"""
