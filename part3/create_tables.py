@@ -1,6 +1,5 @@
-from run import create_app
-from app import db
-from app.models import *  # importa todos los modelos para que SQLAlchemy los registre
+from hbnb_app import create_app, db
+from hbnb_app.models import *  # para registrar modelos
 
 app = create_app()
 

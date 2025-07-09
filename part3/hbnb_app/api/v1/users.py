@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.services import facade
+from hbnb_app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('users', description='User operations')
@@ -21,15 +21,10 @@ user_update_model = api.model('UserUpdate', {
 
 @api.route('/')
 class UserList(Resource):
-    @jwt_required()
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered or invalid input')
     def post(self):
-        """Register a new user (admin only)"""
-        current_user = get_jwt_identity()
-        if not current_user.get('is_admin'):
-            return {'error': 'Admin privileges required'}, 403
 
         user_data = api.payload
         existing_user = facade.get_user_by_email(user_data['email'])
@@ -60,12 +55,12 @@ class UserResource(Resource):
         }, 200
 
 
-    @jwt_required()
     @api.expect(user_model)  # permite modificar también email y password
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid update fields')
     @api.response(403, 'Admin privileges required')
     @api.response(404, 'User not found')
+    @jwt_required()
     def put(self, user_id):
         """Modify any user (admin only, including email/password)"""
         current_user = get_jwt_identity()
@@ -100,3 +95,5 @@ class UserResource(Resource):
             'last_name': user.last_name,
             'email': user.email
         }, 200
+       
+

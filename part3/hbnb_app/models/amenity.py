@@ -1,18 +1,14 @@
 #!/usr/bin/python3
-from app.models.base import BaseModel
+from .base import BaseModel
 import uuid
-from app import db
+from hbnb_app import db
 class Amenity(BaseModel):
     """Class Amenity """
-    __tablename__ = 'amenities'
+    __tablename__ = 'amenity'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     
-    def __init__(self, name: str):
-        super().__init__()
-        self.name = self.validate_name(name)
-
     def validate_name(self, name):
         if not name:
             raise ValueError("Amenity name is required.")

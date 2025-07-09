@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Review class"""
 from flask_sqlalchemy import SQLAlchemy
-from app.models.base import BaseModel
-from app import db
+from .base import BaseModel
+from hbnb_app import db
 from datetime import datetime
 
 class Review(BaseModel):
@@ -14,27 +14,9 @@ class Review(BaseModel):
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
 
-    place = db.relationship('Place', backref='reviews', lazy=True)
+    #place = db.relationship('Place', backref='reviews', lazy=True)
 
-    def __init__(self, text: str, rating: int, user_id: str, place_id: str):
-        super().__init__()
-        # Validate and assign text and rating
-        self.text = self.validate_text(text)
-        self.rating = self.validate_rating(rating)
-
-        # Resolve user and place by ID via the facade
-        from app.services.facade import facade
-        user = facade.get_user(user_id)
-        if not user:
-            raise ValueError(f"User {user_id} not found")
-        place = facade.get_place(place_id)
-        if not place:
-            raise ValueError(f"Place {place_id} not found")
-        self.user = user
-        self.place = place
-
-        user.add_review(self)
-        place.add_review(self)
+ 
 
     def validate_text(self, value):
         if not value or not isinstance(value, str) or len(value.strip()) == 0:

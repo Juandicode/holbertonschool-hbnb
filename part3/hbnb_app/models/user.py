@@ -1,36 +1,20 @@
 #!/usr/bin/python3
 """User class"""
-
 import uuid
-from app.models.base import BaseModel
-from app import db, bcrypt
+from .base import BaseModel
+from hbnb_app import db, bcrypt
 class User(BaseModel, db.Model):
     __tablename__ = 'users'
-
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True) #Utilizar UUID
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)    
     
-    places = db.relationship('Place', backref='user', lazy=True, cascade='all, delete-orphan')
-    reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
+    #places = db.relationship('Place', backref='user', lazy=True, cascade='all, delete-orphan')
+    #reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
     
-    def __init__(self, first_name: str, last_name: str, email: str, password: str, is_admin: bool = False):
-        super().__init__()
-        """the super inherits from baseclass"""
-        self.first_name = self.validate_name(first_name, 'First Name')
-        self.last_name = self.validate_name(last_name, 'Last name')
-        self.email = self.validate_email(email)
-        self.hash_password(password) # added to store the hashed password
-        self.is_admin = is_admin
-        self.places = []        # list to store places owned by user
-        self.reviews = []  # list for reviews by user
-    def validate_name(self, value, field_name):
-        if not value or not isinstance(value, str) or len(value) > 50:
-            raise ValueError(f"{field_name} is required and cannot exceed 50 characters")
-        return value
-
     def validate_email(self, value):
         if not value or not isinstance(value, str):
             raise ValueError("Email is required")
@@ -76,3 +60,4 @@ class User(BaseModel, db.Model):
             raise ValueError("Solo se pueden añadir instancias de Review")
         if review not in self.reviews:
             self.reviews.append(review)
+

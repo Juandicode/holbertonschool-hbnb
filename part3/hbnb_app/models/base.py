@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import uuid
 from datetime import datetime
-from app import db
+from hbnb_app import db
 from datetime import datetime, timezone
 class BaseModel:
     __abstract__ = True  # This ensures SQLAlchemy does not create a table for BaseModel

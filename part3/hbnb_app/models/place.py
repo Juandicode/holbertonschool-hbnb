@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 """Place class"""
-from app.models.base import BaseModel
+from .base import BaseModel
 import uuid
-from app import db
+from hbnb_app import db
 from flask_sqlalchemy import SQLAlchemy
 
 place_amenity = db.Table('place_amenity',
     db.Column('place_id', db.Integer, db.ForeignKey('places.id'), primary_key=True),
-    db.Column('amenity_id', db.Integer, db.ForeignKey('amenities.id'), primary_key=True)
+    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'), primary_key=True)
 )
 
 class Place(BaseModel):
@@ -21,25 +21,13 @@ class Place(BaseModel):
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.String(36), nullable=False)
-
-    owner = db.relationship('User', backref='places', lazy=True)
-    reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
-    amenities = db.relationship('Amenity', secondary='place_amenity', backref='places', lazy=True)
-
-    def __init__(self, title: str, price: float, latitude: float, longitude: float, owner, description: str = ""):
-        super().__init__()  # hereda id, created_at, updated_at
-        self.title = self.validate_title(title)
-        self.description = self.validate_description(description)
-        self.price = self.validate_price(price)
-        self.latitude = self.validate_latitude(latitude)
-        self.longitude = self.validate_longitude(longitude)
-        self.owner = self.validate_owner(owner)
-        self._amenities = []  # list for storing amenities
-        self.reviews = []  # list for storing reviews
-        owner.add_place(self)  # Automatically add this place to the owner list
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    # tengo que hacer una clave foranea entre place y amenity 
     
- 
+    #owner = db.relationship('User', backref='places', lazy=True)
+    #reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
+    #amenities = db.relationship('Amenity', secondary='place_amenity', backref='places', lazy=True)
+
     def validate_title(self, value):
         if not value or not isinstance(value, str) or len(value) > 100:
             raise ValueError("Title is required and cannot exceed 100 characters")
@@ -92,10 +80,6 @@ class Place(BaseModel):
         if amenity in self.amenities:
             self.amenities.remove(amenity)
 
-    @property
-    def amenities(self):
-        return self._amenities
-
     def to_dict(self):
         """Returns a dictionary representation of the place"""
         return {
@@ -132,12 +116,10 @@ class Place(BaseModel):
             self.longitude = self.validate_longitude(data['longitude'])
 
         if 'amenities' in data:
-            self._amenities = []
+            self.amenities.clear()
             for amenity_id in data['amenities']:
                 amenity = amenity_repo.get(amenity_id)
                 if not amenity:
                     raise ValueError(f"Amenity {amenity_id} not found")
                 self.add_amenity(amenity)
 
-
-from app.models.amenity import Amenity

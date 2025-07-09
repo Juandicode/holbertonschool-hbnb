@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import create_access_token
 from flask import request
-from app.services import facade
+from hbnb_app.services import facade
 
 # Namespace correcto
 auth_ns = Namespace('auth', description='Authentication operations')
@@ -31,3 +31,5 @@ class Login(Resource):
         })
 
         return {'access_token': access_token}, 200
+
+api = auth_ns

@@ -1,5 +1,5 @@
-from app.persistence.repository import Repository
-from app import db
+from hbnb_app.persistence.repository import Repository
+from hbnb_app import db
 
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):

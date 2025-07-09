@@ -1,6 +1,6 @@
-from app.models.user import User
-from app.persistence.sqlalchemy_repository import SQLAlchemyRepository
-from app import db
+from hbnb_app.models.user import User
+from hbnb_app.persistence.sqlalchemy_repository import SQLAlchemyRepository
+from hbnb_app import db
 
 
 class UserRepository(SQLAlchemyRepository):

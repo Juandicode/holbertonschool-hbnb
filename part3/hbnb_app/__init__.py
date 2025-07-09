@@ -1,13 +1,7 @@
 from flask import Flask, jsonify
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
 from flask_restx import Api
-from flask_sqlalchemy import SQLAlchemy         # Import SQLAlchemy
 from config import DevelopmentConfig
-from flask import Flask, Blueprint, jsonify
-bcrypt = Bcrypt()
-jwt    = JWTManager()
-db     = SQLAlchemy()                          # Crear instancia de SQLAlchemy
+from hbnb_app.extensions import bcrypt, jwt, db
 
 def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
@@ -16,13 +10,11 @@ def create_app(config_class=DevelopmentConfig):
     # Inicializar extensiones
     bcrypt.init_app(app)
     jwt.init_app(app)
-    db.init_app(app)                            # Conectar SQLAlchemy con Flask
-    blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
-    api = Api(app,
-            version='1.0',
-            title='HBnB API',
-            description='API for managing places, users, reviews, and amenities',
-            prefix='/api/v1')
+    db.init_app(app)
+
+    # Importar modelos para que SQLAlchemy los registre
+    import hbnb_app.models  
+
     # JWT error handlers
     @jwt.unauthorized_loader
     def unauthorized_callback(callback):
@@ -40,12 +32,18 @@ def create_app(config_class=DevelopmentConfig):
     def revoked_token_callback(jwt_header, jwt_payload):
         return jsonify({'msg': 'Token has been revoked'}), 401
 
-    # Importar y registrar namespaces
-    from app.api.v1.users     import api as users_ns
-    from app.api.v1.places    import api as places_ns
-    from app.api.v1.reviews   import api as reviews_ns
-    from app.api.v1.amenities import api as amenities_ns
-    from app.api.v1.auth      import auth_ns
+    api = Api(
+        app,
+        version='1.0',
+        title='HBnB API',
+        description='API for managing places, users, reviews, and amenities',
+        prefix='/api/v1'
+    )
+    from hbnb_app.api.v1.places    import api as places_ns
+    from hbnb_app.api.v1.users     import api as users_ns
+    from hbnb_app.api.v1.reviews   import api as reviews_ns
+    from hbnb_app.api.v1.amenities import api as amenities_ns
+    from hbnb_app.api.v1.auth      import api as auth_ns
 
     api.add_namespace(users_ns,     path='/users')
     api.add_namespace(places_ns,    path='/places')
@@ -53,7 +51,4 @@ def create_app(config_class=DevelopmentConfig):
     api.add_namespace(amenities_ns, path='/amenities')
     api.add_namespace(auth_ns,      path='/auth')
 
-    app.register_blueprint(blueprint)
-
     return app
-
