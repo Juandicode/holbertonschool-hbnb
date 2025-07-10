@@ -5,7 +5,7 @@ from .base import BaseModel
 from hbnb_app import db
 from datetime import datetime
 
-class Review(BaseModel):
+class Review(BaseModel, db.Model):
     __tablename__ = 'reviews'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

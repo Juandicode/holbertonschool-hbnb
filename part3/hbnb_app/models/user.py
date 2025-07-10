@@ -12,7 +12,7 @@ class User(BaseModel, db.Model):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)    
     
-    places = db.relationship('Place', backref='user', lazy=True, cascade='all, delete-orphan')
+    places = db.relationship('Place', backref='owner', lazy=True, cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
     
     def validate_email(self, value):

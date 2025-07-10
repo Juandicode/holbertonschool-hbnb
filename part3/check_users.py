@@ -1,5 +1,5 @@
-from app import bcrypt, create_app, db
-from app.models.user import User
+from hbnb_app import bcrypt, create_app, db
+from hbnb_app.models.user import User
 
 app = create_app()
 app.app_context().push()

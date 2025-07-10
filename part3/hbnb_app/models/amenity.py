@@ -2,7 +2,7 @@
 from .base import BaseModel
 import uuid
 from hbnb_app import db
-class Amenity(BaseModel):
+class Amenity(BaseModel, db.Model):
     """Class Amenity """
     __tablename__ = 'amenity'
 

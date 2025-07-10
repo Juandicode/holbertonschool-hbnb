@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 
-class Place(BaseModel):
+class Place(BaseModel, db.Model):
     """Place model"""
 
     __tablename__ = 'places'
@@ -26,7 +26,6 @@ class Place(BaseModel):
 )
     # tengo que hacer una clave foranea entre place y amenity 
     
-    owner = db.relationship('User', backref='places', lazy=True)
     reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
     amenities = db.relationship('Amenity', secondary='place_amenity', backref='places', lazy=True)
 
