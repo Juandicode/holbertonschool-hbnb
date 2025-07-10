@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 
-class Place(BaseModel, db.Model):
+class Place(BaseModel):
     """Place model"""
 
     __tablename__ = 'places'

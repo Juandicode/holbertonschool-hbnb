@@ -3,7 +3,7 @@
 import uuid
 from .base import BaseModel
 from hbnb_app import db, bcrypt
-class User(BaseModel, db.Model):
+class User(BaseModel):
     __tablename__ = 'users'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True, nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
