@@ -5,10 +5,7 @@ import uuid
 from hbnb_app import db
 from flask_sqlalchemy import SQLAlchemy
 
-place_amenity = db.Table('place_amenity',
-    db.Column('place_id', db.Integer, db.ForeignKey('places.id'), primary_key=True),
-    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'), primary_key=True)
-)
+
 
 class Place(BaseModel):
     """Place model"""
@@ -22,11 +19,16 @@ class Place(BaseModel):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    
+    place_amenity = db.Table('place_amenity',
+    db.Column('place_id', db.Integer, db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'), primary_key=True)
+)
     # tengo que hacer una clave foranea entre place y amenity 
     
-    #owner = db.relationship('User', backref='places', lazy=True)
-    #reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
-    #amenities = db.relationship('Amenity', secondary='place_amenity', backref='places', lazy=True)
+    owner = db.relationship('User', backref='places', lazy=True)
+    reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
+    amenities = db.relationship('Amenity', secondary='place_amenity', backref='places', lazy=True)
 
     def validate_title(self, value):
         if not value or not isinstance(value, str) or len(value) > 100:

@@ -5,15 +5,15 @@ from .base import BaseModel
 from hbnb_app import db, bcrypt
 class User(BaseModel, db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True) #Utilizar UUID
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True, nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)    
     
-    #places = db.relationship('Place', backref='user', lazy=True, cascade='all, delete-orphan')
-    #reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
+    places = db.relationship('Place', backref='user', lazy=True, cascade='all, delete-orphan')
+    reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
     
     def validate_email(self, value):
         if not value or not isinstance(value, str):
