@@ -43,7 +43,11 @@ class PlaceList(Resource):
             api.abort(400, 'No input data provided')
 
         current_user = get_jwt_identity()
-        data['owner_id'] = current_user
+        # Ensure only the user ID is set as owner_id
+        if isinstance(current_user, dict) and 'id' in current_user:
+            data['owner_id'] = current_user['id']
+        else:
+            data['owner_id'] = current_user
 
         try:                                                    
             place = facade.create_place(data)
@@ -87,6 +91,25 @@ class PlaceResource(Resource):
         data = request.get_json()
         if not data:
             api.abort(400, 'No input data provided')
+        # Convert amenity names to IDs if needed
+        if 'amenities' in data:
+            amenity_ids = []
+            for amenity in data['amenities']:
+                # If amenity is a digit, treat as ID, else try to look up by name
+                if isinstance(amenity, int) or (isinstance(amenity, str) and amenity.isdigit()):
+                    amenity_ids.append(int(amenity))
+                else:
+                    # Lookup amenity by name
+                    found = None
+                    for a in facade.get_all_amenities():
+                        if a.name == amenity:
+                            found = a.id
+                            break
+                    if found is not None:
+                        amenity_ids.append(found)
+                    else:
+                        api.abort(400, f"Amenity '{amenity}' not found")
+            data['amenities'] = amenity_ids
         try:
             updated = facade.update_place(place_id, data)
             if not updated:
@@ -106,7 +129,12 @@ class PlaceResource(Resource):
             api.abort(404, f'place {place_id} not found')
 
         current_user = get_jwt_identity()
-        if place['owner']['id'] != current_user:
+        # current_user is a dict with 'id' and 'is_admin'
+        if isinstance(current_user, dict):
+            user_id = current_user.get('id')
+        else:
+            user_id = current_user
+        if place.owner.id != user_id:
             api.abort(403, 'Unauthorized action')
 
         facade.delete_place(place_id)

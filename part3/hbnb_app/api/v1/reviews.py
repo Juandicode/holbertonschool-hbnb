@@ -52,7 +52,11 @@ class ReviewList(Resource):
         try:
             data = request.get_json()
             current_user = get_jwt_identity()
-            data['user_id'] = current_user  # 🔒 Aseguramos que la review sea del usuario autenticado
+            # Ensure only the user ID is set as user_id
+            if isinstance(current_user, dict) and 'id' in current_user:
+                data['user_id'] = current_user['id']
+            else:
+                data['user_id'] = current_user
             review = hbnb_facade.create_review(data)
             return review.to_dict(), 201
         except ValueError as e:
@@ -119,7 +123,8 @@ class ReviewResource(Resource):
             current_user = get_jwt_identity()
             is_admin = current_user.get('is_admin', False)  # 
 
-            if not is_admin and review['user']['id'] != current_user['id']:
+            # review is a model object, not a dict
+            if not is_admin and review.user.id != current_user['id']:
                 api.abort(403, 'Unauthorized action')  # validación extendida
 
             hbnb_facade.delete_review(review_id)

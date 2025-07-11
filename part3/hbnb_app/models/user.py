@@ -15,35 +15,48 @@ class User(BaseModel):
     places = db.relationship('Place', backref='owner', lazy=True, cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
     
+
     def validate_email(self, value):
         if not value or not isinstance(value, str):
             raise ValueError("Email is required")
-        if '@' not in value or '.' not in value:
+        email = value.strip().lower()
+        if '@' not in email or '.' not in email:
             raise ValueError("Invalid email format")
-        return value
+        return email
+
+    def __init__(self, *args, **kwargs):
+        if 'email' in kwargs:
+            kwargs['email'] = self.validate_email(kwargs['email'])
+        if 'password' in kwargs:
+            # Only hash if not already a bcrypt hash
+            if not str(kwargs['password']).startswith('$2b$'):
+                self.set_password(kwargs['password'])
+                kwargs.pop('password')  # set_password already sets self.password
+        super().__init__(*args, **kwargs)
 
     def validate_is_admin(self, value):
         if not isinstance(value, bool):
             raise ValueError("is_admin must be a boolean")
         return value
 
-    def hash_password(self, password: str):
-        """hashes password before storing it in self. password"""
-        from app import bcrypt
+
+    def set_password(self, password: str):
+        """Sets the user's password (hashes it before storing)"""
+        from hbnb_app import bcrypt
         if not password or not isinstance(password, str) or len(password) < 6:
             raise ValueError("Password must be a string with at least 6 characters.")
-        self.password = (
-                bcrypt
-                .generate_password_hash(password)
-                .decode('utf-8') # correct way
-        )
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    def verify_password(self, password: str) -> bool: # verifies the password
-        """verifies a password against the stored hash"""
-        from app import bcrypt
+    def hash_password(self, password: str):
+        """DEPRECATED: Use set_password instead. Kept for backward compatibility."""
+        self.set_password(password)
+
+    def verify_password(self, password: str) -> bool:
+        """Verifies a password against the stored hash"""
+        from hbnb_app import bcrypt
         if not password:
             return False
-        return bcrypt.check_password_hash(self.password, password) # ues flask-bcrpyt
+        return bcrypt.check_password_hash(self.password, password)
 
     def add_place(self, place):
         """Add a place to the user list of owned places"""

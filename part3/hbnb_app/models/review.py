@@ -11,7 +11,7 @@ class Review(BaseModel):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(db.String(1024), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
 
     #place = db.relationship('Place', backref='reviews', lazy=True)

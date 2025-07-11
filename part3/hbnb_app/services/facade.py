@@ -43,7 +43,8 @@ class HBnBFacade:
         if not amenity:
             return None
         amenity.update_from_dict(amenity_data)
-        self.amenity_repo.update(amenity)
+        # update expects (id, data)
+        self.amenity_repo.update(amenity_id, amenity_data)
         return amenity
 
     # Place methods
@@ -77,6 +78,18 @@ class HBnBFacade:
         return self.place_repo.get_all()
 
     def update_place(self, place_id, place_data):
+        place = self.get_place(place_id)
+        if not place:
+            return None
+        # Handle amenities update with proper objects
+        if 'amenities' in place_data:
+            amenity_ids = place_data['amenities']
+            amenities = []
+            for amenity_id in amenity_ids:
+                amenity = self.get_amenity(amenity_id)
+                amenities.append(amenity)
+            place_data = dict(place_data)  # avoid mutating input
+            place_data['amenities'] = amenities
         self.place_repo.update(place_id, place_data)
         return self.get_place(place_id)
 

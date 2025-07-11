@@ -1,5 +1,14 @@
 from flask import Flask, jsonify
 from flask_restx import Api
+
+authorizations = {
+    'Bearer': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization',
+        'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"'
+    }
+}
 from config import DevelopmentConfig
 from hbnb_app.extensions import bcrypt, jwt, db
 
@@ -37,7 +46,9 @@ def create_app(config_class=DevelopmentConfig):
         version='1.0',
         title='HBnB API',
         description='API for managing places, users, reviews, and amenities',
-        prefix='/api/v1'
+        prefix='/api/v1',
+        authorizations=authorizations,
+        security='Bearer'
     )
     from hbnb_app.api.v1.places    import api as places_ns
     from hbnb_app.api.v1.users     import api as users_ns
