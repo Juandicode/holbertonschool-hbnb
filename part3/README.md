@@ -166,3 +166,4 @@ erDiagram
     AMENITY ||--o{ PLACE_AMENITY : linked_by
 Paste the above into a Mermaid live editor or include directly in your Markdown for a rendered diagram.
 
+Developed by Bruno Barrera and Juan Diego Martinez
