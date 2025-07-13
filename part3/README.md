@@ -1,172 +1,168 @@
-HBnB - Business Logic and API
+![HBnB Logo](./hbnb_logo.png)
 
-Overview
-This project is part of the Holberton School curriculum and represents the second phase of the HBnB application. The main focus is to implement the core business logic and RESTful API endpoints using Flask and Flask-RESTx, following modular design principles and the Facade pattern.
+# HBnB – Part 3: Enhanced Backend with Authentication and Database Integration
 
-The goal is to create a maintainable and scalable backend architecture that supports Users, Places, Amenities, and Reviews. Features like JWT authentication and database persistence will be introduced in future stages.
+This repository contains the third part of the HBnB project: a secure, database‑backed backend powered by Flask, SQLAlchemy, JWT authentication, and role‑based access control. In this stage you replace in‑memory storage with a persistent relational database, introduce user authentication and authorization, and produce a visual model of your schema with Mermaid.js.
 
-Project Objectives
-Organize the application following a modular Python project structure
+---
 
-Implement the core business logic for Users, Places, Amenities, and Reviews
+## Table of Contents
 
-Build RESTful APIs using Flask-RESTx
+1. [Features](#features)  
+2. [Getting Started](#getting-started)  
+3. [Configuration](#configuration)  
+4. [Database Setup](#database-setup)  
+5. [Running the Application](#running-the-application)  
+6. [API Endpoints](#api-endpoints)  
+7. [Data Models & Relationships](#data-models--relationships)  
+8. [Mermaid ER Diagram](#mermaid-er-diagram)  
+9. [Testing](#testing)  
+10. [Roadmap](#roadmap)
 
-Use the Facade pattern to abstract and unify business operations
+---
 
-Validate inputs at the logic layer
+## Features
 
-Perform black-box and unit testing
+- **JWT Authentication**  
+  Secure login and token issuance with `flask-jwt-extended`.
 
-Document the entire API using Swagger
+- **Role‑Based Access Control**  
+  Admin users (`is_admin`) can manage all resources; regular users can only modify their own.
 
-Technologies Used
-Python 3.12
+- **SQLAlchemy Persistence**  
+  SQLite in development, easily switchable to MySQL for production.
 
-Flask
+- **CRUD Endpoints**  
+  Full create, read, update, and delete operations for Users, Places, Reviews, and Amenities.
 
-Flask-RESTx
+- **Data Validation & Security**  
+  Bcrypt password hashing, request payload validation, and proper HTTP status codes.
 
-cURL (manual endpoint testing)
+- **Schema Visualization**  
+  ER diagram rendered with Mermaid.js for clear documentation of relationships.
 
-Swagger (API documentation and interactive testing)
+---
 
-In-memory repository (temporary data storage)
+## Getting Started
 
-Project Structure
-hbnb/
-├── app/
-│ ├── __init__.py
-│ ├── api/
-│ │ ├── __init__.py
-│ │ ├── v1/
-│ │ │ ├── __init__.py
-│ │ │ ├── users.py
-│ │ │ ├── places.py
-│ │ │ ├── reviews.py
-│ │ │ ├── amenities.py
-│ ├── models/
-│ │ ├── __init__.py
-│ │ ├── user.py
-│ │ ├── place.py
-│ │ ├── review.py
-│ │ ├── amenity.py
-│ ├── services/
-│ │ ├── __init__.py
-│ │ ├── facade.py
-│ ├── persistence/
-│ │ ├── __init__.py
-│ │ ├── repository.py
-├── run.py
-├── config.py
-├── requirements.txt
-├── README.md
+### Prerequisites
 
-Implementation Resume
-Business Logic Layer:
-Each model (User, Place, Review, Amenity) is implemented as a Python class with attributes, validation logic, and serialization methods. UUIDs are used for unique IDs. Validation occurs on creation and update.
+- Python 3.8+  
+- Virtual environment tool (venv, pipenv, etc.)  
+- PostgreSQL or MySQL for production (SQLite is used by default)  
+- Node.js (for Mermaid live preview, optional)
 
-Facade Pattern:
-All business operations are routed through a centralized Facade service, which acts as a bridge between the API layer and business logic, promoting separation of concerns.
+### Install Dependencies
 
-API Layer:
-Each model has its own Flask-RESTx namespace with documented endpoints. The API handles serialization, error responses, and returns structured JSON.
-
-Endpoints Implemented
-User
-
-POST /users/ – Create a user
-
-GET /users/ – Retrieve all users
-
-GET /users/{id} – Retrieve one user by ID
-
-PUT /users/{id} – Update a user
-
-Place
-
-POST /places/ – Create a place
-
-GET /places/ – Retrieve all places
-
-GET /places/{id} – Retrieve a specific place
-
-PUT /places/{id} – Update a place
-
-Amenity
-
-POST /amenities/ – Create an amenity
-
-GET /amenities/ – List all amenities
-
-GET /amenities/{id} – Get an amenity by ID
-
-PUT /amenities/{id} – Update an amenity
-
-Review
-
-POST /reviews/ – Create a review
-
-GET /reviews/ – List all reviews
-
-GET /reviews/{id} – Get a review by ID
-
-PUT /reviews/{id} – Update a review
-
-DELETE /reviews/{id} – Delete a review
-
-GET /reviews/places/{place_id} – Get all reviews for a place
-
-Testing & Validation
-Validation Rules:
-Input validation is handled in the business logic. It ensures required fields are provided, data types are correct, and entity relationships exist (e.g., a review must belong to a user and a place).
-
-Manual Testing:
-All endpoints were tested with:
-
-Swagger (interactive documentation)
-
-cURL (manual black-box testing)
-
-Example cURL command:
-POST a user:
-curl -X POST http://127.0.0.1:5000/users/ -H "Content-Type: application/json" -d '{"first_name": "Bruno", "last_name": "Barrera", "email": "bruno@example.com"}'
-
-Swagger Documentation
-Swagger UI is available at the root URL once the server is running:
-
-http://127.0.0.1:5000/
-
-From here, all endpoints can be tested interactively.
-
-Setup & Installation
-Clone the repository:
+```bash
 git clone https://github.com/BrunoBarrera1/holbertonschool-hbnb.git
-
-Navigate to the project folder:
-cd holbertonschool-hbnb/part2
-
-Create and activate a virtual environment:
-python3 -m venv venv
-source venv/bin/activate
-
-Install dependencies:
+cd holbertonschool-hbnb/part3
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+Configuration
+Copy the sample configuration and update with your credentials:
 
-Run the app:
-python3 run.py
+bash
+cp instance/config.py.example instance/config.py
+Edit instance/config.py:
 
-Resources
-Flask Documentation – https://flask.palletsprojects.com/en/stable/
+python
+class Config:
+    SECRET_KEY               = "a‑very‑secret‑key"
+    SQLALCHEMY_DATABASE_URI  = "sqlite:///data/hbnb_dev.db"
+    JWT_SECRET_KEY           = "another‑secret‑key"
+    # For production (MySQL):
+    # SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://user:password@host/db_name"
+Database Setup
+Create migrations
 
-Flask-RESTx – https://flask-restx.readthedocs.io/en/latest/
+bash
+flask db init
+flask db migrate -m "Initial schema"
+flask db upgrade
+Seed initial data (optional)
 
-RESTful API Design – https://restfulapi.net/
+bash
+python scripts/seed_data.py
+Running the Application
+Start the development server:
 
-Python OOP – https://realpython.com/python3-object-oriented-programming/
+bash
+export FLASK_APP=app
+export FLASK_ENV=development
+flask run
+By default, the API will be available at http://127.0.0.1:5000/api/v1.
 
-Facade Pattern – https://refactoring.guru/design-patterns/facade/python/example
+API Endpoints
+POST /api/v1/auth/login
+Authenticate user and receive JWT tokens.
 
-Authors: Bruno Barrera, Juandiego Martinez
+POST /api/v1/users/
+Register a new user (admin only).
 
+GET /api/v1/users/<id>
+Retrieve user profile (self or admin).
+
+GET /api/v1/states, POST /api/v1/states, etc.
+Full CRUD for States, Cities, Places, Reviews, Amenities.
+
+See API_DOCUMENTATION.md for full details.
+
+Data Models & Relationships
+Entity	Attributes
+User	id, first_name, last_name, email, password_hash, is_admin
+Place	id, title, description, price, latitude, longitude, owner_id
+Review	id, text, rating, user_id, place_id
+Amenity	id, name
+PlaceAmenity	place_id, amenity_id
+
+A User can own many Places (one‑to‑many).
+
+A Place can have many Reviews (one‑to‑many) and many Amenities (many‑to‑many via PlaceAmenity).
+
+A Review belongs to one User and one Place.
+
+Mermaid ER Diagram
+mermaid
+erDiagram
+    USER {
+        int    id PK
+        string first_name
+        string last_name
+        string email
+        string password_hash
+        bool   is_admin
+    }
+    PLACE {
+        int    id PK
+        string title
+        string description
+        float  price
+        float  latitude
+        float  longitude
+        int    owner_id FK
+    }
+    REVIEW {
+        int    id PK
+        string text
+        int    rating
+        int    user_id FK
+        int    place_id FK
+    }
+    AMENITY {
+        int    id PK
+        string name
+    }
+    PLACE_AMENITY {
+        int place_id  FK
+        int amenity_id FK
+    }
+
+    USER ||--o{ PLACE          : owns
+    USER ||--o{ REVIEW         : writes
+    PLACE ||--o{ REVIEW         : has
+    PLACE ||--o{ PLACE_AMENITY  : links
+    AMENITY ||--o{ PLACE_AMENITY : linked_by
+Paste the above into a Mermaid live editor or include directly in your Markdown for a rendered diagram.
 
