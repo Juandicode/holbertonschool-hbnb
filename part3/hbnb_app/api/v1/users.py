@@ -30,8 +30,11 @@ class UserList(Resource):
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
             api.abort(400, 'Email already registered')
-
-        new_user = facade.create_user(user_data)
+        try:    
+            new_user = facade.create_user(user_data)
+        except ValueError as e:
+            api.abort(400, str(e))
+            
         return {
             'id': new_user.id,
             'first_name': new_user.first_name,

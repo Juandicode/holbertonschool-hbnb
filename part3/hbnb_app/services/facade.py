@@ -13,7 +13,14 @@ class HBnBFacade:
         self.amenity_repo = SQLAlchemyRepository(Amenity)
 
     def create_user(self, user_data):
-        user = User(**user_data)
+        allowed_fields = ['email', 'password', 'first_name', 'last_name']
+        extra_fields = set(user_data.keys()) - set(allowed_fields)
+
+        if extra_fields:
+            raise ValueError(f"Invalid fields: {extra_fields}")
+        
+        filtered_data = {k : user_data[k] for k in allowed_fields if k in user_data}
+        user = User(**filtered_data)
         self.user_repo.add(user)
         return user
 

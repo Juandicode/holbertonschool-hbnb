@@ -25,14 +25,17 @@ class User(BaseModel):
         return email
 
     def __init__(self, *args, **kwargs):
+        allowed_fields = ['first_name', 'last_name', 'email', 'password',]
+        """prevents the user from creating an instance with fields not in allowed_fields"""
         if 'email' in kwargs:
             kwargs['email'] = self.validate_email(kwargs['email'])
         if 'password' in kwargs:
             # Only hash if not already a bcrypt hash
             if not str(kwargs['password']).startswith('$2b$'):
                 self.set_password(kwargs['password'])
-                kwargs.pop('password')  # set_password already sets self.password
-        super().__init__(*args, **kwargs)
+                kwargs.pop('password')
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in allowed_fields}  # set_password already sets self.password
+        super().__init__(*args, **filtered_kwargs)
 
     def validate_is_admin(self, value):
         if not isinstance(value, bool):
