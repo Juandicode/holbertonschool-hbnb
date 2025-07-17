@@ -91,7 +91,18 @@ class PlaceResource(Resource):
         data = request.get_json()
         if not data:
             api.abort(400, 'No input data provided')
-        # Convert amenity names to IDs if needed
+
+        place = facade.get_place(place_id)
+        if not place:
+            api.abort(404, f'Place {place_id} not found')
+
+        current_user = get_jwt_identity()
+        user_id = current_user.get('id') if isinstance(current_user, dict) else current_user
+        is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
+
+        if place.owner.id != user_id and not is_admin:
+            api.abort(403, 'Unauthorized action')
+            
         if 'amenities' in data:
             amenity_ids = []
             for amenity in data['amenities']:
