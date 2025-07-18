@@ -32,7 +32,23 @@ class HBnBFacade:
     
     # Amenity methods
     def create_amenity(self, amenity_data):
-        amenity = Amenity(**amenity_data)
+        name = amenity_data.get('name')
+        owner_id = amenity_data.get('owner_id')
+
+        if not name or not owner_id:
+            raise ValueError("Amenity must have a name and an owner_id")
+        
+        # validate that the user exists
+        owner = self.get_user(owner_id)
+        if not owner:
+            raise ValueError(f'Owner with ID {owner_id} not found')
+        
+        # Verify that the user doesnt have an amenity with the same name
+        for amenity in owner.amenities:
+            if amenity.name.strip().lower() == name.strip().lower():
+                raise ValueError(f"Amenity with name '{name}' already exists for this user")
+            
+        amenity = Amenity(name=name, owner=owner)
         self.amenity_repo.add(amenity)
         return amenity
 
@@ -47,7 +63,7 @@ class HBnBFacade:
         for amenity in self.get_all_amenities():
             if amenity.name.strip().lower() == name:
                 return amenity
-        raise ValueError(f"Amenity '{name}' not found")
+        raise ValueError(f"Amenity with name {name} not found")
 
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
@@ -66,6 +82,8 @@ class HBnBFacade:
         owner = self.get_user(place_data.get('owner_id'))
         if not owner:
             raise ValueError("Owner not found")
+        
+        current_user = place_data.get('user')
 
         amenities = []
         for amenity_input in place_data.get('amenities', []):
@@ -74,6 +92,10 @@ class HBnBFacade:
             except ValueError:
 
                 amenity = self.get_amenity_by_name(amenity_input)
+
+            if not current_user.get('is_admin', False) and amenity.owner_id != owner.id:
+                raise ValueError(f"Amenity '{amenity.name}' does not belong to the user")
+            
             amenities.append(amenity)
 
         place = Place(

@@ -49,6 +49,8 @@ class PlaceList(Resource):
         else:
             data['owner_id'] = current_user
 
+        data['user'] = current_user  # Include user info for validation
+
         try:                                                    
             place = facade.create_place(data)
             return {
@@ -103,10 +105,10 @@ class PlaceResource(Resource):
         if place.owner.id != user_id and not is_admin:
             api.abort(403, 'Unauthorized action')
 
-        if 'owner_id' in data:
-            if data['owner_id'] != str(place.owner.id):
+        if 'owner_id' in data and data['owner_id'] != str(place.owner.id):
+            # Prevent changing the owner of a place
                 api.abort(400, 'Changing the owner of a place is not allowed')
-                data.pop('owner_id')
+
                     
         if 'amenities' in data:
             amenity_ids = []
@@ -149,13 +151,8 @@ class PlaceResource(Resource):
         is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
 
         if not is_admin:
-            if place.owner is None:
-                api.abort(403, "This place has no valid owner.")
-            if place.owner is None and not is_admin:
-                api.abort(403, 'This place has no valid owner, Deletion not allowed')
-
-                if place.owner is not None and place.owner.id != user_id and not is_admin:
-                    api.abort(403, 'Unauthorized action')
+            if not place.owner or place.owner.id != user_id:
+                api.abort(403, 'unauthorized action')
 
         facade.delete_place(place_id)
         return {'message': 'Place deleted successfully'}, 200

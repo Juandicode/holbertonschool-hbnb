@@ -8,6 +8,8 @@ class Amenity(BaseModel):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    owner = db.relationship('User', back_populates='amenities')
     
     def validate_name(self, name):
         if not name:

@@ -97,11 +97,11 @@ class ReviewResource(Resource):
             current_user = get_jwt_identity()
             is_admin = current_user.get('is_admin', False)  # 
 
-            if not is_admin and review['user']['id'] != current_user['id']:
+            if not is_admin and review.user.id != current_user['id']:
                 api.abort(403, 'Unauthorized action')  #  Validación extendida
 
             data = request.get_json()
-            data['user_id'] = review['user']['id']  #  no se permite cambiar autor
+            data['user_id'] = review.user.id  #  no se permite cambiar autor
             updated_review = hbnb_facade.update_review(review_id, data)
             return updated_review.to_dict(), 200
         except ValueError as e:

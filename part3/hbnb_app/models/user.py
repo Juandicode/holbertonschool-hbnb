@@ -14,6 +14,7 @@ class User(BaseModel):
     
     places = db.relationship('Place', backref='owner', lazy=True, cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
+    amenities = db.relationship('Amenity', back_populates='owner', lazy=True, cascade='all, delete-orphan')
     
 
     def validate_email(self, value):
