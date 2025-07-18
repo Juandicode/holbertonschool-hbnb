@@ -91,10 +91,10 @@ class Place(BaseModel):
             "latitude": self.latitude,
             "longitude": self.longitude,
             "owner": {
-                "id": self.owner.id,
-                "first_name": self.owner.first_name,
-                "last_name": self.owner.last_name,
-                "email": self.owner.email
+                "id": self.owner.id if self.owner else None,
+                "first_name": self.owner.first_name if self.owner else None,
+                "last_name": self.owner.last_name if self.owner else None,
+                "email": self.owner.email if self.owner else None
             },
             "amenities": [
                 {"id": amenity.id, "name": amenity.name}
@@ -105,6 +105,8 @@ class Place(BaseModel):
         }
 
     def update_from_dict(self, data: dict, amenity_repo):
+        if 'owner_id' in data:
+            raise ValueError("Cannot update owner_id once the place is created")
         if 'title' in data:
             self.title = self.validate_title(data['title'])
         if 'description' in data:
@@ -118,9 +120,13 @@ class Place(BaseModel):
 
         if 'amenities' in data:
             self.amenities.clear()
-            for amenity_id in data['amenities']:
-                amenity = amenity_repo.get(amenity_id)
+            for amenity_input in data['amenities']:
+                
+                amenity = amenity_repo.get(amenity_input)
                 if not amenity:
-                    raise ValueError(f"Amenity {amenity_id} not found")
-                self.add_amenity(amenity)
 
+                    all_amenities = amenity_repo.get_all()
+                    amenity = next((a for a in all_amenities if a.name.lower() == str(amenity_input).lower()), None)
+                    if not amenity:
+                        raise ValueError(f"Amenity ' {amenity_input}' not found")
+                self.add_amenity(amenity)

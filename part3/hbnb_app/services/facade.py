@@ -41,6 +41,13 @@ class HBnBFacade:
         if not amenity:
             raise ValueError(f"Amenity {amenity_id} not found")
         return amenity
+    
+    def get_amenity_by_name(self, name):
+        name = name.strip().lower()
+        for amenity in self.get_all_amenities():
+            if amenity.name.strip().lower() == name:
+                return amenity
+        raise ValueError(f"Amenity '{name}' not found")
 
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
@@ -61,8 +68,12 @@ class HBnBFacade:
             raise ValueError("Owner not found")
 
         amenities = []
-        for amenity_id in place_data.get('amenities', []):
-            amenity = self.get_amenity(amenity_id)
+        for amenity_input in place_data.get('amenities', []):
+            try:
+                amenity = self.get_amenity(amenity_input)
+            except ValueError:
+
+                amenity = self.get_amenity_by_name(amenity_input)
             amenities.append(amenity)
 
         place = Place(
@@ -88,17 +99,26 @@ class HBnBFacade:
         place = self.get_place(place_id)
         if not place:
             return None
-        # Handle amenities update with proper objects
+        
+        if 'owner_id' in place_data:
+            raise ValueError("Changing the owner of a place is not allowed")
+    
         if 'amenities' in place_data:
-            amenity_ids = place_data['amenities']
             amenities = []
-            for amenity_id in amenity_ids:
-                amenity = self.get_amenity(amenity_id)
+            for amenity_input in place_data['amenities']:
+                try:
+                    amenity = self.get_amenity(amenity_input)
+                except ValueError:
+                    amenity = self.get_amenity_by_name(amenity_input)
                 amenities.append(amenity)
-            place_data = dict(place_data)  # avoid mutating input
+
+    
+            place_data = dict(place_data)
             place_data['amenities'] = amenities
+
         self.place_repo.update(place_id, place_data)
         return self.get_place(place_id)
+        # Handle amenities update with proper objects
 
     def delete_place(self, place_id):
         self.place_repo.delete(place_id)

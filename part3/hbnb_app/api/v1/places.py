@@ -102,7 +102,12 @@ class PlaceResource(Resource):
 
         if place.owner.id != user_id and not is_admin:
             api.abort(403, 'Unauthorized action')
-            
+
+        if 'owner_id' in data:
+            if data['owner_id'] != str(place.owner.id):
+                api.abort(400, 'Changing the owner of a place is not allowed')
+                data.pop('owner_id')
+                    
         if 'amenities' in data:
             amenity_ids = []
             for amenity in data['amenities']:
@@ -140,13 +145,17 @@ class PlaceResource(Resource):
             api.abort(404, f'place {place_id} not found')
 
         current_user = get_jwt_identity()
-        # current_user is a dict with 'id' and 'is_admin'
-        if isinstance(current_user, dict):
-            user_id = current_user.get('id')
-        else:
-            user_id = current_user
-        if place.owner.id != user_id:
-            api.abort(403, 'Unauthorized action')
+        user_id = current_user.get('id') if isinstance(current_user, dict) else current_user
+        is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
+
+        if not is_admin:
+            if place.owner is None:
+                api.abort(403, "This place has no valid owner.")
+            if place.owner is None and not is_admin:
+                api.abort(403, 'This place has no valid owner, Deletion not allowed')
+
+                if place.owner is not None and place.owner.id != user_id and not is_admin:
+                    api.abort(403, 'Unauthorized action')
 
         facade.delete_place(place_id)
         return {'message': 'Place deleted successfully'}, 200

@@ -14,10 +14,10 @@ admin = User(
     first_name="Admin",
     last_name="User",
     email="admin@example.com",
-    password="admin123",
     is_admin=True
 )
-
+admin.set_password("admin123")
+  # Set a
 db.session.add(admin)
 db.session.commit()
 
