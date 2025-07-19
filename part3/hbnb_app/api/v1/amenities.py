@@ -48,29 +48,28 @@ class AmenityResource(Resource):
         except ValueError as e:
             api.abort(404, str(e))
 
+    @jwt_required()
     @api.expect(amenity_model)
     @api.response(200, 'Amenity updated')
     @api.response(400, 'Invalid input data')
     @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
         """Update an existing amenity"""
-        data = request.get_json()
-
-        amenity = facade.get_amenity(amenity_id)
-        if not amenity:
-            api.abort(404, f"Amenity {amenity_id} not found")
-
-        current_user = get_jwt_identity()
-        user_id = current_user.get('id') if isinstance(current_user, dict) else current_user
-        is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
-
-        if str(amenity.owner_id) != str(user_id) and not is_admin:
-            api.abort(403, "You are not allowed to modify this amenity")
-
-
         try:
+            data = request.get_json()
+
+            amenity = facade.get_amenity(amenity_id)
+
+            current_user = get_jwt_identity()
+            user_id = current_user.get('id') if isinstance(current_user, dict) else current_user
+            is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
+
+            if str(amenity.owner_id) != str(user_id) and not is_admin:
+                api.abort(403, "You are not allowed to modify this amenity")
+
             updated = facade.update_amenity(amenity_id, data)
             return updated.to_dict(), 200
+
         except ValueError as e:
             code = 404 if "not found" in str(e).lower() else 400
             api.abort(code, str(e))

@@ -9,7 +9,6 @@ api = Namespace('reviews', description='Review operations')
 review_input_model = api.model('ReviewInput', {
     'text': fields.String(required=True, description='Review text'),
     'rating': fields.Integer(required=True, min=1, max=5, description='Rating (1-5)'),
-    'user_id': fields.String(required=True, description='User ID'),
     'place_id': fields.String(required=True, description='Place ID')
 })
 
@@ -51,6 +50,10 @@ class ReviewList(Resource):
         """Create a new review"""
         try:
             data = request.get_json()
+
+            if 'user_id' in data:
+                api.abort(400, "You cannot manually set user_id")
+                
             current_user = get_jwt_identity()
             # Ensure only the user ID is set as user_id
             if isinstance(current_user, dict) and 'id' in current_user:
