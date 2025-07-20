@@ -16,12 +16,12 @@ def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Inicializar extensiones
+    # Init extensions
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
 
-    # Importar modelos para que SQLAlchemy los registre
+    # Import models for sqlalchemy to register
     import hbnb_app.models  
 
     # JWT error handlers

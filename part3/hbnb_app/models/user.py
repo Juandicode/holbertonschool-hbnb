@@ -64,7 +64,7 @@ class User(BaseModel):
 
     def add_place(self, place):
         """Add a place to the user list of owned places"""
-        from .place import Place    # Local import para evitar importacion circular
+        from .place import Place    # Local import to avoid circular import issues
         if not isinstance(place, Place):
             raise ValueError("Can only add Place instances")
         if place not in self.places:
@@ -72,9 +72,9 @@ class User(BaseModel):
     
     def add_review(self, review):
         """add a review to the user list"""
-        from .review import Review  # Import local
+        from .review import Review  # local import
         if not isinstance(review, Review):
-            raise ValueError("Solo se pueden añadir instancias de Review")
+            raise ValueError("You can only add instances to review")
         if review not in self.reviews:
             self.reviews.append(review)
 
