@@ -76,6 +76,15 @@ class HBnBFacade:
         # update expects (id, data)
         self.amenity_repo.update(amenity_id, amenity_data)
         return amenity
+    
+    def delete_amenity(self, amenity_id, current_user):
+        amenity = self.get_amenity(amenity_id)
+        user_id = current_user.get('id') if isinstance(current_user, dict) else current_user
+        is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
+        if str(amenity.owner_id) != str(user_id) and not is_admin:
+            raise ValueError("You are not allowed to delete this amenity")
+        self.amenity_repo.delete(amenity_id)
+
 
     # Place methods
     def create_place(self, place_data):

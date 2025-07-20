@@ -73,3 +73,27 @@ class AmenityResource(Resource):
         except ValueError as e:
             code = 404 if "not found" in str(e).lower() else 400
             api.abort(code, str(e))
+
+    @jwt_required()
+    @api.response(200, 'Amenity deleted successfully')
+    @api.response(403, 'You are not allowed to delete this amenity')
+    @api.response(404, 'Amenity not found')
+    def delete(self, amenity_id):
+        """Delete an amenity (only owner or admin can delete)"""
+        try:
+            amenity = facade.get_amenity(amenity_id)
+        except ValueError:
+            api.abort(404, f"Amenity {amenity_id} not found")
+
+        current_user = get_jwt_identity()
+        user_id = current_user.get('id') if isinstance(current_user, dict) else current_user
+        is_admin = current_user.get('is_admin', False) if isinstance(current_user, dict) else False
+
+        if str(amenity.owner_id) != str(user_id) and not is_admin:
+            api.abort(403, "You are not allowed to delete this amenity")
+
+        try:
+            facade.amenity_repo.delete(amenity_id)
+            return {'message': f"Amenity {amenity_id} deleted successfully"}, 200
+        except Exception as e:
+            api.abort(400, f"Failed to delete amenity: {str(e)}")        
