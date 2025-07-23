@@ -10,14 +10,7 @@ This repository contains the third part of the HBnB project: a secure, databaseâ
 
 1. [Features](#features)  
 2. [Getting Started](#getting-started)  
-3. [Configuration](#configuration)  
-4. [Database Setup](#database-setup)  
-5. [Running the Application](#running-the-application)  
-6. [API Endpoints](#api-endpoints)  
-7. [Data Models & Relationships](#data-models--relationships)  
-8. [Entity Relationship Diagram](#entity-relationship-diagram)  
-9. [Testing](#testing)  
-10. [Roadmap](#roadmap)
+
 
 ---
 
@@ -64,3 +57,4 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
+Developed by Bruno Barrera & Juan Diego Martinez
