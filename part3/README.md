@@ -41,7 +41,10 @@ This repository contains the third part of the HBnB project: a secure, databaseâ
 - **Schema Visualization**  
   ER diagram rendered for clear documentation of relationships.
 
----
+## Entity Relationship Diagram
+
+![ER Diagram](./diagramas.png)
+
 
 ## Getting Started
 
@@ -61,4 +64,3 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-Developed by Bruno Barrera and Juan Diego Martinez
