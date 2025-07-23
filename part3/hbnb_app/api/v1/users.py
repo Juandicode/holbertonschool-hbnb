@@ -58,7 +58,7 @@ class UserResource(Resource):
         }, 200
 
 
-    @api.expect(user_model)  # permite modificar también email y password
+    @api.expect(user_model)
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid update fields')
     @api.response(403, 'Admin privileges required')
@@ -81,7 +81,6 @@ class UserResource(Resource):
         if not user:
             api.abort(404, 'User not found')
 
-        # Aplicar cambios
         if 'first_name' in data:
             user.first_name = data['first_name']
         if 'last_name' in data:
@@ -89,7 +88,7 @@ class UserResource(Resource):
         if 'email' in data:
             user.email = data['email']
         if 'password' in data:
-            user.set_password(data['password'])  # asegurate que tu modelo tenga este método
+            user.set_password(data['password'])
 
         facade.user_repo.update(user)
         return {

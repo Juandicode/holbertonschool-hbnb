@@ -54,7 +54,7 @@ class Place(BaseModel):
             raise ValueError("Longitude must be a float between -180.0 and 180.0")
         return float(value)
 
-    def validate_owner(self, value):       # Local import to avoid circular import
+    def validate_owner(self, value):       # Local import
         from .user import User
         if not isinstance(value, User):
             raise ValueError("Owner must be a valid User instance")
@@ -62,7 +62,7 @@ class Place(BaseModel):
 
     def add_review(self, review):
         """Añade una reseña a este lugar"""
-        from .review import Review  # import local pa avoid circular import
+        from .review import Review  # local import
         if not isinstance(review, Review):
             raise ValueError("Solo se pueden añadir instancias de Review")
         if review not in self.reviews:

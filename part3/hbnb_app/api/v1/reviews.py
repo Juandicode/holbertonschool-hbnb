@@ -101,10 +101,10 @@ class ReviewResource(Resource):
             is_admin = current_user.get('is_admin', False)  # 
 
             if not is_admin and review.user.id != current_user['id']:
-                api.abort(403, 'Unauthorized action')  #  Validación extendida
+                api.abort(403, 'Unauthorized action')  #  extended validation
 
             data = request.get_json()
-            data['user_id'] = review.user.id  #  no se permite cambiar autor
+            data['user_id'] = review.user.id  #  cannot change author
             updated_review = hbnb_facade.update_review(review_id, data)
             return updated_review.to_dict(), 200
         except ValueError as e:
@@ -128,7 +128,7 @@ class ReviewResource(Resource):
 
             # review is a model object, not a dict
             if not is_admin and review.user.id != current_user['id']:
-                api.abort(403, 'Unauthorized action')  # validación extendida
+                api.abort(403, 'Unauthorized action')  # extended validation
 
             hbnb_facade.delete_review(review_id)
             return {'message': 'Review deleted successfully'}, 200
