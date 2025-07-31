@@ -1,0 +1,51 @@
+<!-- place.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle del Lugar - HBnB</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="../hbnb_logo.png" class="logo" alt="Logo">
+        <span class="logo-text">HBnB</span>
+      </div>
+      <nav>
+        <a href="index.html">Inicio</a>
+        <a href="login.html" id="login-link">Login</a>
+        <a href="#" id="logout-link" style="display:none;">Logout</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1 class="place-title"></h1>
+    <div class="place-details-container" id="place-details">
+      <div class="place-info">
+        <p><strong>Anfitrión:</strong> <span id="host-name"></span></p>
+        <p><strong>Precio:</strong> <span id="price"></span></p>
+        <p><strong>Descripción:</strong> <span id="description"></span></p>
+        <p><strong>Amenidades:</strong> <span id="amenities"></span></p>
+      </div>
+      <div class="reviews-section">
+        <h2>Reseñas</h2>
+        <div id="reviews-container"></div>
+      </div>
+      <div class="add-review-section" id="add-review">
+        <h2>Agregar reseña</h2>
+        <form id="review-form">
+          <div class="form-group">
+            <label for="review-text">Tu reseña</label>
+            <textarea id="review-text" required></textarea>
+          </div>
+          <button type="submit" class="submit-button">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer>HBnB &copy; 2024</footer>
+  <script src="scripts.js"></script>
+</body>
+</html>

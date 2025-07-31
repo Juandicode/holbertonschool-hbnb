@@ -1,0 +1,38 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HBnB - Lugares</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="../hbnb_logo.png" class="logo" alt="Logo">
+        <span class="logo-text">HBnB</span>
+      </div>
+      <nav>
+        <a href="login.html" id="login-link">Login</a>
+        <a href="#" id="logout-link" style="display:none;">Logout</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1 class="main-title">Lugares disponibles</h1>
+    <div class="filter-container">
+      <label for="price-filter">Filtrar por precio:</label>
+      <select id="price-filter">
+        <option value="all">Todos</option>
+        <option value="50">Hasta $50</option>
+        <option value="100">Hasta $100</option>
+        <option value="200">Hasta $200</option>
+      </select>
+    </div>
+    <div id="places-list"></div>
+  </main>
+  <footer>HBnB &copy; 2024</footer>
+  <script src="scripts.js"></script>
+</body>
+</html>
